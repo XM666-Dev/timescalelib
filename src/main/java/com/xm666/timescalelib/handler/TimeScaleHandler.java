@@ -134,7 +134,7 @@ public class TimeScaleHandler {
         var mc = Minecraft.getInstance();
 
         TimeScaleHandler.scalePartialTick = false;
-        var partialTick = mc.getTimer().getGameTimeDeltaPartialTick(runsNormally);
+        var partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(runsNormally);
         TimeScaleHandler.scalePartialTick = true;
 
         return partialTick;
@@ -143,6 +143,6 @@ public class TimeScaleHandler {
     public static float getScalablePartialTick(boolean runsNormally) {
         var mc = Minecraft.getInstance();
 
-        return mc.getTimer().getGameTimeDeltaPartialTick(runsNormally);
+        return mc.getDeltaTracker().getGameTimeDeltaPartialTick(runsNormally);
     }
 }

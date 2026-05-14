@@ -13,10 +13,11 @@
     "requireAnnotations": true
   },
   "client": [
+    "TimeScaleMixin$AbstractClientPlayerMixin",
     "TimeScaleMixin$CameraMixin",
     "TimeScaleMixin$DeltaTrackerTimerMixin",
     "TimeScaleMixin$EntityMixin",
-    "TimeScaleMixin$EntityRenderDispatcherMixin",
+    "TimeScaleMixin$EntityRendererMixin",
     "TimeScaleMixin$GameRendererMixin",
     "TimeScaleMixin$LevelRendererMixin",
     "TimeScaleMixin$LivingEntityRendererMixin",

@@ -22,7 +22,7 @@ public class CommandHandler {
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("timescale")
-                        .requires(p_308941_ -> p_308941_.hasPermission(3))
+                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
                         .then(
                                 Commands.literal("apply")
                                         .then(
