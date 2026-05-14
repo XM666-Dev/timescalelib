@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "package": "com.xm666.timescalelib.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "TimeScaleMixin$LivingEntityMixin",
+    "TimeScaleMixin$TickRateManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "TimeScaleMixin$CameraMixin",
+    "TimeScaleMixin$DeltaTrackerTimerMixin",
+    "TimeScaleMixin$EntityMixin",
+    "TimeScaleMixin$EntityRenderDispatcherMixin",
+    "TimeScaleMixin$GameRendererMixin",
+    "TimeScaleMixin$LevelRendererMixin",
+    "TimeScaleMixin$LivingEntityRendererMixin",
+    "TimeScaleMixin$MinecraftMixin"
+  ]
+}
