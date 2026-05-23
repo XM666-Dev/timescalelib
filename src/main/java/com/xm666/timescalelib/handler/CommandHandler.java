@@ -30,7 +30,7 @@ public class CommandHandler {
                                                         .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"0.0", "0.25", "0.5"}, builder))
                                                         .executes(context -> {
                                                             var scale = FloatArgumentType.getFloat(context, "scale");
-                                                            TimeScaleHandler.applyScale(scale, -1);
+                                                            TimeScaleHandler.applyScale(scale, -1, 1);
                                                             return 1;
                                                         })
                                                         .then(
@@ -39,7 +39,7 @@ public class CommandHandler {
                                                                         .executes(context -> {
                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
-                                                                            TimeScaleHandler.applyScale(scale, duration);
+                                                                            TimeScaleHandler.applyScale(scale, duration, duration != -1 ? 20 : 1);
                                                                             return 1;
                                                                         })
                                                                         .then(
@@ -75,7 +75,7 @@ public class CommandHandler {
                                                                                                             var include = EntityArgument.getEntity(context, "include");
                                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
-                                                                                                            TimeScaleHandler.applyScale(include, scale, duration);
+                                                                                                            TimeScaleHandler.applyScale(include, scale, duration, duration != -1 ? 20 : 1);
                                                                                                             return 1;
                                                                                                         })
                                                                                         )
@@ -88,7 +88,7 @@ public class CommandHandler {
                                                                                         .executes(context -> {
                                                                                             var include = EntityArgument.getEntity(context, "include");
                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
-                                                                                            TimeScaleHandler.applyScale(include, scale, -1);
+                                                                                            TimeScaleHandler.applyScale(include, scale, -1, 1);
                                                                                             return 1;
                                                                                         })
                                                                         )
