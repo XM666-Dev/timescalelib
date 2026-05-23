@@ -1,10 +1,11 @@
 {
   "required": true,
   "package": "com.xm666.timescalelib.mixin",
+  "plugin": "com.xm666.timescalelib.MixinConfigPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "TimeScaleMixin$LivingEntityMixin",
-    "TimeScaleMixin$TickRateManagerMixin"
+    "timescalelib.TimeScaleMixin$LivingEntityMixin",
+    "timescalelib.TimeScaleMixin$TickRateManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -13,13 +14,17 @@
     "requireAnnotations": true
   },
   "client": [
-    "TimeScaleMixin$CameraMixin",
-    "TimeScaleMixin$DeltaTrackerTimerMixin",
-    "TimeScaleMixin$EntityMixin",
-    "TimeScaleMixin$EntityRenderDispatcherMixin",
-    "TimeScaleMixin$GameRendererMixin",
-    "TimeScaleMixin$LevelRendererMixin",
-    "TimeScaleMixin$LivingEntityRendererMixin",
-    "TimeScaleMixin$MinecraftMixin"
+    "punchy.GameTimeMixin$AttackStateMachineMixin",
+    "punchy.GameTimeMixin$MiningStateMachineMixin",
+    "punchy.GameTimeMixin$SpearStateMachineMixin",
+    "punchy.GameTimeMixin$UseItemStateMachineMixin",
+    "timescalelib.TimeScaleMixin$CameraMixin",
+    "timescalelib.TimeScaleMixin$DeltaTrackerTimerMixin",
+    "timescalelib.TimeScaleMixin$EntityMixin",
+    "timescalelib.TimeScaleMixin$EntityRenderDispatcherMixin",
+    "timescalelib.TimeScaleMixin$GameRendererMixin",
+    "timescalelib.TimeScaleMixin$LevelRendererMixin",
+    "timescalelib.TimeScaleMixin$LivingEntityRendererMixin",
+    "timescalelib.TimeScaleMixin$MinecraftMixin"
   ]
 }
