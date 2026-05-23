@@ -26,7 +26,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         var packageFromIndex = mixinPackage.length() + 1;
         var packageToIndex = mixinClassName.indexOf('.', packageFromIndex);
         var packageName = mixinClassName.substring(packageFromIndex, packageToIndex);
-        return FMLLoader.getLoadingModList().getModFileById(packageName) != null;
+        return FMLLoader.getCurrent().getLoadingModList().getModFileById(packageName) != null;
     }
 
     @Override
