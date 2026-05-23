@@ -1,4 +1,4 @@
-package com.xm666.timescalelib.mixin;
+package com.xm666.timescalelib.mixin.timescalelib;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;

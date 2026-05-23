@@ -14,18 +14,23 @@ public class Scaler {
     }
 
     public boolean isEnd(int tickCount) {
-        return tickCount >= end;
+        return tickCount >= end && end != -1;
     }
 
     public float getScale(int tickCount) {
         var remainingTicks = getRemainingTicks(tickCount);
+        var transition = getTransition();
         var delta = MathLib.clampedInverseLerp(remainingTicks, transition, 0);
         delta = MathLib.smoothstep(delta);
         return Mth.lerp(delta, scale, 1.0F);
     }
 
     public int getRemainingTicks(int tickCount) {
-        return end - tickCount;
+        return Math.max(end - tickCount, 1);
+    }
+
+    public int getTransition() {
+        return Math.max(transition, 1);
     }
 
     public boolean scalesTravelling(net.minecraft.world.entity.Entity entity) {

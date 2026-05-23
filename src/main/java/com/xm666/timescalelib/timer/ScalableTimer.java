@@ -51,7 +51,7 @@ public abstract class ScalableTimer {
     }
 
     public int getScaleEnd(int duration) {
-        return getTickCount() + 1 + duration;
+        return duration != -1 ? getTickCount() + 1 + duration : -1;
     }
 
     public boolean runsTicking() {
