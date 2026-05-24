@@ -14,6 +14,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "physicsmod.PlaybackMixin",
     "punchy.GameTimeMixin$AttackStateMachineMixin",
     "punchy.GameTimeMixin$MiningStateMachineMixin",
     "punchy.GameTimeMixin$SpearStateMachineMixin",
