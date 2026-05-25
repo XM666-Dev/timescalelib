@@ -1,6 +1,6 @@
 package com.xm666.timescalelib.mixin.punchy;
 
-import net.minecraft.client.Minecraft;
+import com.xm666.timescalelib.handler.TimeScaleHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -16,41 +16,33 @@ import punchy.client.state.UseItemStateMachine;
 public class GameTimeMixin {
     @Mixin(AttackStateMachine.class)
     private static class AttackStateMachineMixin {
-        @SuppressWarnings("DataFlowIssue")
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
-            var mc = Minecraft.getInstance();
-            return mc.player.tickCount;
+            return TimeScaleHandler.clientTimer.getTickCount();
         }
     }
 
     @Mixin(MiningStateMachine.class)
     private static class MiningStateMachineMixin {
-        @SuppressWarnings("DataFlowIssue")
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
-            var mc = Minecraft.getInstance();
-            return mc.player.tickCount;
+            return TimeScaleHandler.clientTimer.getTickCount();
         }
     }
 
     @Mixin(SpearStateMachine.class)
     private static class SpearStateMachineMixin {
-        @SuppressWarnings("DataFlowIssue")
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
-            var mc = Minecraft.getInstance();
-            return mc.player.tickCount;
+            return TimeScaleHandler.clientTimer.getTickCount();
         }
     }
 
     @Mixin(UseItemStateMachine.class)
     private static class UseItemStateMachineMixin {
-        @SuppressWarnings("DataFlowIssue")
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
-            var mc = Minecraft.getInstance();
-            return mc.player.tickCount;
+            return TimeScaleHandler.clientTimer.getTickCount();
         }
     }
 }

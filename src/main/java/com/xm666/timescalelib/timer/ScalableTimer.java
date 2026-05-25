@@ -1,5 +1,6 @@
 package com.xm666.timescalelib.timer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -13,12 +14,12 @@ public abstract class ScalableTimer {
     private boolean runTick;
     private float deltaTickResidual;
 
-    public int getDefaultTransition() {
-        return 20;
-    }
-
     private float getDefaultScale() {
         return 1.0F;
+    }
+
+    public int getDefaultTransition() {
+        return 20;
     }
 
     private float calculateScale() {
@@ -38,20 +39,20 @@ public abstract class ScalableTimer {
         deltaTickResidual = Mth.frac(nextDeltaTickResidual);
     }
 
-    public void addScaler(float scale, int duration, int transition) {
-        scalers.add(new Scaler(scale, getScaleEnd(duration), transition));
+    public void addScaler(float scale, int duration, int transition, Entity target) {
+        scalers.add(new Scaler(scale, getScalerEnd(duration), getScalerTransition(duration, transition), target));
     }
 
-    public void addScaler(float scale, int duration, int transition, Entity target) {
-        scalers.add(new Scaler.Entity(scale, getScaleEnd(duration), transition, target));
+    private int getScalerEnd(int duration) {
+        return duration != -1 ? getTickCount() + duration + 1 : -1;
+    }
+
+    private int getScalerTransition(int duration, int transition) {
+        return transition != -1 ? Math.min(transition, duration) : duration;
     }
 
     public void clearScaler() {
         scalers.clear();
-    }
-
-    public int getScaleEnd(int duration) {
-        return duration != -1 ? getTickCount() + 1 + duration : -1;
     }
 
     public boolean runsTicking() {
@@ -74,16 +75,25 @@ public abstract class ScalableTimer {
 
     public static class Client extends ScalableTimer {
         private int tickCount;
+        private float deltaTickBase;
 
         @Override
         public void tick() {
+            var mc = Minecraft.getInstance();
+            if (mc.level == null || mc.isPaused()) return;
+
             ++tickCount;
             super.tick();
+            deltaTickBase = runsTicking() ? 0.0F : deltaTickBase + getScale();
         }
 
         @Override
         public int getTickCount() {
             return tickCount;
+        }
+
+        public float getDeltaTickBase() {
+            return deltaTickBase;
         }
     }
 
