@@ -30,38 +30,38 @@ public class CommandHandler {
                                                         .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"0.0", "0.25", "0.5"}, builder))
                                                         .executes(context -> {
                                                             var scale = FloatArgumentType.getFloat(context, "scale");
-                                                            TimeScaleHandler.applyScale(scale, -1, 1);
+                                                            TimeScaleHandler.applyScale(scale, -1);
                                                             return 1;
                                                         })
                                                         .then(
                                                                 Commands.argument("duration", IntegerArgumentType.integer(-1))
-                                                                        .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"600", "1200", "-1"}, builder))
+                                                                        .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"-1", "80", "1200"}, builder))
                                                                         .executes(context -> {
                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
-                                                                            TimeScaleHandler.applyScale(scale, duration, duration != -1 ? 20 : 1);
+                                                                            TimeScaleHandler.applyScale(scale, duration);
                                                                             return 1;
                                                                         })
                                                                         .then(
                                                                                 Commands.argument("transition", IntegerArgumentType.integer(-1))
-                                                                                        .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"0", "20", "-1"}, builder))
+                                                                                        .suggests((context, builder) -> SharedSuggestionProvider.suggest(new String[]{"-1", "20", "60"}, builder))
                                                                                         .executes(context -> {
                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
                                                                                             var transition = IntegerArgumentType.getInteger(context, "transition");
-                                                                                            TimeScaleHandler.applyScale(scale, duration, transition != -1 ? transition : duration);
+                                                                                            TimeScaleHandler.applyScale(scale, duration, transition);
                                                                                             return 1;
                                                                                         })
                                                                                         .then(
                                                                                                 Commands.literal("include")
                                                                                                         .then(
-                                                                                                                Commands.argument("include", EntityArgument.player())
+                                                                                                                Commands.argument("target", EntityArgument.entity())
                                                                                                                         .executes(context -> {
-                                                                                                                            var include = EntityArgument.getEntity(context, "include");
+                                                                                                                            var target = EntityArgument.getEntity(context, "target");
                                                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
                                                                                                                             var transition = IntegerArgumentType.getInteger(context, "transition");
-                                                                                                                            TimeScaleHandler.applyScale(include, scale, duration, transition != -1 ? transition : duration);
+                                                                                                                            TimeScaleHandler.applyScale(target, scale, duration, transition);
                                                                                                                             return 1;
                                                                                                                         })
                                                                                                         )
@@ -70,12 +70,12 @@ public class CommandHandler {
                                                                         .then(
                                                                                 Commands.literal("include")
                                                                                         .then(
-                                                                                                Commands.argument("include", EntityArgument.player())
+                                                                                                Commands.argument("target", EntityArgument.entity())
                                                                                                         .executes(context -> {
-                                                                                                            var include = EntityArgument.getEntity(context, "include");
+                                                                                                            var target = EntityArgument.getEntity(context, "target");
                                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
                                                                                                             var duration = IntegerArgumentType.getInteger(context, "duration");
-                                                                                                            TimeScaleHandler.applyScale(include, scale, duration, duration != -1 ? 20 : 1);
+                                                                                                            TimeScaleHandler.applyScale(target, scale, duration);
                                                                                                             return 1;
                                                                                                         })
                                                                                         )
@@ -84,11 +84,11 @@ public class CommandHandler {
                                                         .then(
                                                                 Commands.literal("include")
                                                                         .then(
-                                                                                Commands.argument("include", EntityArgument.player())
+                                                                                Commands.argument("target", EntityArgument.entity())
                                                                                         .executes(context -> {
-                                                                                            var include = EntityArgument.getEntity(context, "include");
+                                                                                            var target = EntityArgument.getEntity(context, "target");
                                                                                             var scale = FloatArgumentType.getFloat(context, "scale");
-                                                                                            TimeScaleHandler.applyScale(include, scale, -1, 1);
+                                                                                            TimeScaleHandler.applyScale(target, scale, -1);
                                                                                             return 1;
                                                                                         })
                                                                         )

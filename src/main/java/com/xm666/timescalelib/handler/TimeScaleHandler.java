@@ -17,12 +17,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 @EventBusSubscriber(modid = TimeScaleLib.MODID)
 public class TimeScaleHandler {
-    public static ScalableTimer clientTimer;
-    public static ScalableTimer serverTimer;
+    public static ScalableTimer.Client clientTimer;
+    public static ScalableTimer.Server serverTimer;
     public static boolean scaleRunNormally = true;
     public static boolean disableRunNormally = false;
     public static boolean scalePartialTick = true;
-    public static float deltaTickRunning;
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -36,11 +35,7 @@ public class TimeScaleHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
-        var mc = Minecraft.getInstance();
-        if (mc.level == null || mc.isPaused()) return;
-
         clientTimer.tick();
-        deltaTickRunning = clientTimer.runsTicking() ? 0.0F : deltaTickRunning + clientTimer.getScale();
     }
 
     @SubscribeEvent
@@ -50,12 +45,7 @@ public class TimeScaleHandler {
 
     public static void handlePayload(final ApplyScalePayload payload, final IPayloadContext context) {
         var level = context.player().level();
-        var target = level.getEntity(payload.targetEntity());
-        if (target != null) {
-            clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition(), target);
-            return;
-        }
-        clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition());
+        clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition(), level.getEntity(payload.targetEntity()));
     }
 
     public static void handlePayload(final RemoveScalePayload payload, final IPayloadContext context) {
@@ -63,12 +53,11 @@ public class TimeScaleHandler {
     }
 
     public static void applyScale(float scale, int scaleTicks) {
-        applyScale(scale, scaleTicks, serverTimer.getDefaultTransition());
+        applyScale(null, scale, scaleTicks, serverTimer.getDefaultTransition());
     }
 
     public static void applyScale(float scale, int scaleTicks, int transition) {
-        serverTimer.addScaler(scale, scaleTicks, transition);
-        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, scaleTicks, transition, 0));
+        applyScale(null, scale, scaleTicks, transition);
     }
 
     public static void applyScale(Entity entity, float scale, int scaleTicks) {
@@ -77,7 +66,7 @@ public class TimeScaleHandler {
 
     public static void applyScale(Entity entity, float scale, int scaleTicks, int transition) {
         serverTimer.addScaler(scale, scaleTicks, transition, entity);
-        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, scaleTicks, transition, entity.getId()));
+        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, scaleTicks, transition, entity != null ? entity.getId() : 0));
     }
 
     public static void removeScale() {
@@ -95,6 +84,10 @@ public class TimeScaleHandler {
 
     private static float getScale(ScalableTimer timer) {
         return timer != null ? timer.getScale() : 1.0F;
+    }
+
+    public static float getDeltaTickBase() {
+        return clientTimer.getDeltaTickBase();
     }
 
     @SuppressWarnings("DataFlowIssue")

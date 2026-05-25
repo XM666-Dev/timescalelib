@@ -67,8 +67,9 @@ public class TimeScaleMixin {
         private float modifyPartialTick(float original) {
             if (!TimeScaleHandler.scalePartialTick) return original;
 
-            var scale = Math.min(TimeScaleHandler.getScale(true), 1.0F - TimeScaleHandler.deltaTickRunning);
-            return TimeScaleHandler.deltaTickRunning + original * scale;
+            var base = TimeScaleHandler.getDeltaTickBase();
+            var scale = Math.min(TimeScaleHandler.getScale(true), 1.0F - base);
+            return base + original * scale;
         }
     }
 
