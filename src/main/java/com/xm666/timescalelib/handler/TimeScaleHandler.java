@@ -35,11 +35,15 @@ public class TimeScaleHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
+        if (clientTimer == null) return;
+
         clientTimer.tick();
     }
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Pre event) {
+        if (serverTimer == null) return;
+
         serverTimer.tick();
     }
 
