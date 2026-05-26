@@ -82,18 +82,6 @@ public class TimeScaleHandler {
         return isClientSide ? clientTimer : serverTimer;
     }
 
-    public static float getScale(boolean isClientSide) {
-        return getScale(getTimer(isClientSide));
-    }
-
-    private static float getScale(ScalableTimer timer) {
-        return timer != null ? timer.getScale() : 1.0F;
-    }
-
-    public static float getDeltaTickBase() {
-        return clientTimer.getDeltaTickBase();
-    }
-
     @SuppressWarnings("DataFlowIssue")
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
