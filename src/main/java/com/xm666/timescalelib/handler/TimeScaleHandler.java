@@ -35,11 +35,15 @@ public class TimeScaleHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
+        if (clientTimer == null) return;
+
         clientTimer.tick();
     }
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Pre event) {
+        if (serverTimer == null) return;
+
         serverTimer.tick();
     }
 
@@ -76,18 +80,6 @@ public class TimeScaleHandler {
 
     public static ScalableTimer getTimer(boolean isClientSide) {
         return isClientSide ? clientTimer : serverTimer;
-    }
-
-    public static float getScale(boolean isClientSide) {
-        return getScale(getTimer(isClientSide));
-    }
-
-    private static float getScale(ScalableTimer timer) {
-        return timer != null ? timer.getScale() : 1.0F;
-    }
-
-    public static float getDeltaTickBase() {
-        return clientTimer.getDeltaTickBase();
     }
 
     @SuppressWarnings("DataFlowIssue")

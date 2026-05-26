@@ -65,10 +65,10 @@ public class TimeScaleMixin {
     private static class DeltaTrackerTimerMixin {
         @ModifyReturnValue(method = "getGameTimeDeltaPartialTick", at = @At(value = "RETURN", ordinal = 1))
         private float modifyPartialTick(float original) {
-            if (!TimeScaleHandler.scalePartialTick) return original;
+            if (!TimeScaleHandler.scalePartialTick || TimeScaleHandler.clientTimer == null) return original;
 
-            var base = TimeScaleHandler.getDeltaTickBase();
-            var scale = Math.min(TimeScaleHandler.getScale(true), 1.0F - base);
+            var base = TimeScaleHandler.clientTimer.getDeltaTickBase();
+            var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - base);
             return base + original * scale;
         }
     }
