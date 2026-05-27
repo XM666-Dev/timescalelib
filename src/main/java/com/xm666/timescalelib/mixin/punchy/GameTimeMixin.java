@@ -3,7 +3,7 @@ package com.xm666.timescalelib.mixin.punchy;
 import com.bawnorton.mixinsquared.TargetHandler;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.properties.numeric.UseDuration;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,9 +57,9 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = ItemProperties.class, priority = 2000)
-    private static class ItemPropertiesMixin {
-        @TargetHandler(mixin = "punchy.mixin.client.ItemPropertiesMixin", name = "resolveRemainingTicks")
+    @Mixin(value = UseDuration.class, priority = 2000)
+    private static class UseDurationMixin {
+        @TargetHandler(mixin = "punchy.mixin.client.UseDurationPropertyMixin", name = "punchy$gateUseDuration")
         @Redirect(method = "@MixinSquared:Handler", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private static long redirectGameTime(ClientLevel instance) {
             return TimeScaleHandler.clientTimer.getTickCount();

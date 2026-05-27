@@ -4,8 +4,8 @@
   "plugin": "com.xm666.timescalelib.MixinConfigPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "timescalelib.TimeScaleMixin$LivingEntityMixin",
-    "timescalelib.TimeScaleMixin$TickRateManagerMixin"
+    "timescalelib.TickMixin$LivingEntityMixin",
+    "timescalelib.TickMixin$TickRateManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -17,16 +17,21 @@
     "physicsmod.PlaybackMixin",
     "punchy.GameTimeMixin$AttackStateMachineMixin",
     "punchy.GameTimeMixin$MiningStateMachineMixin",
+    "punchy.GameTimeMixin$PunchyAnimationManagerMixin",
     "punchy.GameTimeMixin$SpearStateMachineMixin",
+    "punchy.GameTimeMixin$UseDurationMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
-    "timescalelib.TimeScaleMixin$AbstractClientPlayerMixin",
-    "timescalelib.TimeScaleMixin$CameraMixin",
-    "timescalelib.TimeScaleMixin$DeltaTrackerTimerMixin",
-    "timescalelib.TimeScaleMixin$EntityMixin",
-    "timescalelib.TimeScaleMixin$EntityRendererMixin",
-    "timescalelib.TimeScaleMixin$GameRendererMixin",
-    "timescalelib.TimeScaleMixin$LevelRendererMixin",
-    "timescalelib.TimeScaleMixin$LivingEntityRendererMixin",
-    "timescalelib.TimeScaleMixin$MinecraftMixin"
+    "timescalelib.PartialTickMixin$AbstractClientPlayerMixin",
+    "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
+    "timescalelib.PartialTickMixin$GameCameraMixin$GameRendererMixin",
+    "timescalelib.PartialTickMixin$GameEntityMixin$EntityMixin",
+    "timescalelib.PartialTickMixin$GameEntityMixin$EntityRendererMixin",
+    "timescalelib.PartialTickMixin$GameEntityMixin$LevelRendererMixin",
+    "timescalelib.PartialTickMixin$GameEntityMixin$LivingEntityMixin",
+    "timescalelib.PartialTickMixin$GameEntityMixin$LivingEntityRendererMixin",
+    "timescalelib.PartialTickMixin$GameRendererMixin",
+    "timescalelib.PartialTickMixin$GameTimerMixin$MinecraftMixin",
+    "timescalelib.PartialTickMixin$GameTimerMixin$TimerMixin",
+    "timescalelib.PartialTickMixin$GameViewMixin$GameRendererMixin"
   ]
 }
