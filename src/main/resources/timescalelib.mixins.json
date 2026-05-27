@@ -21,6 +21,7 @@
     "punchy.GameTimeMixin$PunchyAnimationManagerMixin",
     "punchy.GameTimeMixin$SpearStateMachineMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
+    "timescalelib.PartialTickMixin$EntityMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$GameRendererMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$EntityMixin",

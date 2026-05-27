@@ -44,13 +44,12 @@ public class PartialTickMixin {
             private float modifyPartialTick(float original) {
                 if (!TimeScaleHandler.scalePartialTick || TimeScaleHandler.clientTimer == null) return original;
 
-                var base = TimeScaleHandler.clientTimer.getDeltaTickSequential();
-                var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - base);
-                return base + original * scale;
+                var sequentialTick = TimeScaleHandler.clientTimer.getDeltaTickSequential();
+                var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - sequentialTick);
+                return sequentialTick + original * scale;
             }
         }
 
-        @OnlyIn(Dist.CLIENT)
         @Mixin(Minecraft.class)
         private static class MinecraftMixin {
             @WrapOperation(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isLevelRunningNormally()Z"))
@@ -76,6 +75,14 @@ public class PartialTickMixin {
             return TimeScaleHandler.isEntityScalableFrozen(player)
                     ? delta
                     : TimeScaleHandler.getOriginalPartialTick(!TimeScaleHandler.isEntityOriginalFrozen(player));
+        }
+    }
+
+    @Mixin(Entity.class)
+    private static class EntityMixin {
+        @WrapWithCondition(method = "baseTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;walkDistO:F", opcode = Opcodes.PUTFIELD))
+        private boolean wrapWalkDistO(Entity instance, float value) {
+            return TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
         }
     }
 
@@ -210,11 +217,6 @@ public class PartialTickMixin {
             @WrapWithCondition(method = "setOldPosAndRot", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;zOld:D", opcode = Opcodes.PUTFIELD))
             private boolean wrapZOld(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
                 return setRef.get();
-            }
-
-            @WrapWithCondition(method = "baseTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;walkDistO:F", opcode = Opcodes.PUTFIELD))
-            private boolean wrapWalkDistO(Entity instance, float value) {
-                return TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
             }
         }
 
