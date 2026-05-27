@@ -40,15 +40,10 @@ public abstract class ScalableTimer {
     }
 
     public void addScaler(float scale, int duration, int transition, Entity target) {
-        scalers.add(new Scaler(scale, getScalerEnd(duration), getScalerTransition(duration, transition), target));
-    }
-
-    private int getScalerEnd(int duration) {
-        return duration != -1 ? getTickCount() + duration + 1 : -1;
-    }
-
-    private int getScalerTransition(int duration, int transition) {
-        return transition != -1 ? Math.min(transition, duration) : duration;
+        var finalScale = Mth.clamp(scale, 0.0F, 1.0F);
+        var finalEnd = duration != -1 ? getTickCount() + duration + 1 : -1;
+        var finalTransition = transition != -1 ? Math.min(transition, duration) : duration;
+        scalers.add(new Scaler(finalScale, finalEnd, finalTransition, target));
     }
 
     public void clearScaler() {
@@ -75,7 +70,7 @@ public abstract class ScalableTimer {
 
     public static class Client extends ScalableTimer {
         private int tickCount;
-        private float deltaTickBase;
+        private float deltaTickSequential;
 
         @Override
         public void tick() {
@@ -84,7 +79,7 @@ public abstract class ScalableTimer {
 
             ++tickCount;
             super.tick();
-            deltaTickBase = runsTicking() ? 0.0F : deltaTickBase + getScale();
+            deltaTickSequential = runsTicking() ? 0.0F : deltaTickSequential + getScale();
         }
 
         @Override
@@ -92,8 +87,8 @@ public abstract class ScalableTimer {
             return tickCount;
         }
 
-        public float getDeltaTickBase() {
-            return deltaTickBase;
+        public float getDeltaTickSequential() {
+            return deltaTickSequential;
         }
     }
 
