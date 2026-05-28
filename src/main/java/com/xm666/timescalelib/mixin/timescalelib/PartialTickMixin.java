@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.xm666.timescalelib.TimeScaleLib;
+import com.xm666.timescalelib.handler.MixinHandler;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -37,84 +37,65 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @OnlyIn(Dist.CLIENT)
 public class PartialTickMixin {
-    private static class GameTimerMixin {
-        @Mixin(DeltaTracker.Timer.class)
-        private static class TimerMixin {
-            @ModifyReturnValue(method = "getGameTimeDeltaPartialTick", at = @At(value = "RETURN", ordinal = 1))
-            private float modifyPartialTick(float original) {
-                if (!TimeScaleHandler.scalePartialTick || TimeScaleHandler.clientTimer == null) return original;
+    @Mixin(DeltaTracker.Timer.class)
+    private static class TimerMixin {
+        @ModifyReturnValue(method = "getGameTimeDeltaPartialTick", at = @At(value = "RETURN", ordinal = 1))
+        private float modifyPartialTick(float original) {
+            if (!TimeScaleHandler.scalePartialTick || TimeScaleHandler.clientTimer == null) return original;
 
-                var sequentialTick = TimeScaleHandler.clientTimer.getDeltaTickSequential();
-                var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - sequentialTick);
-                return sequentialTick + original * scale;
+            var sequentialTick = TimeScaleHandler.clientTimer.getDeltaTickSequential();
+            var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - sequentialTick);
+            return sequentialTick + original * scale;
+        }
+    }
+
+    private static class GameBobMixin {
+        @Mixin(Entity.class)
+        private static class EntityMixin {
+            @WrapWithCondition(method = "baseTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;walkDistO:F", opcode = Opcodes.PUTFIELD))
+            private boolean wrapWalkDistO(Entity instance, float value) {
+                return TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
             }
         }
 
-        @Mixin(Minecraft.class)
-        private static class MinecraftMixin {
-            @WrapOperation(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isLevelRunningNormally()Z"))
-            private boolean wrapRunNormally(Minecraft instance, Operation<Boolean> original) {
-                TimeScaleHandler.scaleRunNormally = false;
-                var normally = original.call(instance);
-                TimeScaleHandler.scaleRunNormally = true;
-
-                return normally;
+        @Mixin(GameRenderer.class)
+        private static class GameRendererMixin {
+            @ModifyArg(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"), index = 0)
+            private float modifyBobLerpDelta(float delta, @Local Player player) {
+                return TimeScaleHandler.isEntityScalableFrozen(player)
+                        ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(player))
+                        : delta;
             }
         }
     }
 
     @Mixin(GameRenderer.class)
     private static class GameRendererMixin {
-        @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F"))
-        private float wrapOriginalPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original) {
-            return TimeScaleHandler.getOriginalPartialTick(runsNormally);
+        @Shadow
+        @Final
+        Minecraft minecraft;
+
+        @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;pick(F)V"))
+        private float modifyPickPartialTick(float partialTick, @Share(value = "scalablePartialTick", namespace = TimeScaleLib.MODID) LocalFloatRef scalablePartialTickRef) {
+            var entity = minecraft.getCameraEntity();
+            var scalablePartialTick = TimeScaleHandler.isEntityScalableFrozen(entity)
+                    ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
+                    : partialTick;
+            scalablePartialTickRef.set(scalablePartialTick);
+            return scalablePartialTick;
         }
 
-        @ModifyArg(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"), index = 0)
-        private float modifyBobLerpDelta(float delta, @Local Player player) {
-            return TimeScaleHandler.isEntityScalableFrozen(player)
-                    ? delta
-                    : TimeScaleHandler.getOriginalPartialTick(!TimeScaleHandler.isEntityOriginalFrozen(player));
+        @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/Camera;FLorg/joml/Matrix4f;)V"))
+        private float modifyHandPartialTick(float original, @Share(value = "scalablePartialTick", namespace = TimeScaleLib.MODID) LocalFloatRef scalablePartialTickRef) {
+            return scalablePartialTickRef.get();
         }
-    }
 
-    @Mixin(Entity.class)
-    private static class EntityMixin {
-        @WrapWithCondition(method = "baseTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;walkDistO:F", opcode = Opcodes.PUTFIELD))
-        private boolean wrapWalkDistO(Entity instance, float value) {
-            return TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
-        }
-    }
-
-    private static class GameViewMixin {
-        @Mixin(GameRenderer.class)
-        private static class GameRendererMixin {
-            @Shadow
-            @Final
-            Minecraft minecraft;
-
-            @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;pick(F)V"))
-            private float modifyPickPartialTick(float partialTick, @Share(value = "scalablePartialTick", namespace = TimeScaleLib.MODID) LocalFloatRef scalablePartialTickRef) {
-                var entity = minecraft.getCameraEntity();
-                var scalablePartialTick = TimeScaleHandler.isEntityScalableFrozen(entity)
-                        ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
-                        : partialTick;
-                scalablePartialTickRef.set(scalablePartialTick);
-                return scalablePartialTick;
-            }
-
-            @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/Camera;FLorg/joml/Matrix4f;)V"))
-            private float modifyHandPartialTick(float original, @Share(value = "scalablePartialTick", namespace = TimeScaleLib.MODID) LocalFloatRef scalablePartialTickRef) {
-                return scalablePartialTickRef.get();
-            }
-
-            @ModifyArg(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
-            private float modifyHandBobTick(float partialTick) {
-                var entity = minecraft.getCameraEntity();
-                return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
-                        ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
-                        : partialTick;
-            }
+        @ModifyArg(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
+        private float modifyHandBobPartialTick(float partialTick) {
+            var entity = minecraft.getCameraEntity();
+            return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+                    ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
+                    : partialTick;
         }
     }
 
@@ -131,7 +112,7 @@ public class PartialTickMixin {
             }
 
             @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
-            private float modifyCameraBobTick(float partialTick) {
+            private float modifyCameraBobPartialTick(float partialTick) {
                 var entity = minecraft.getCameraEntity();
                 return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
@@ -142,7 +123,7 @@ public class PartialTickMixin {
         @Mixin(Camera.class)
         private static class CameraMixin {
             @Inject(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D", ordinal = 0))
-            private void onPositionLerp(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
+            private void onCameraPositionLerp(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
                 var authoritativePartialTick = TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
@@ -150,8 +131,18 @@ public class PartialTickMixin {
             }
 
             @ModifyArg(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D"), index = 0)
-            private double modifyPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
+            private double modifyCameraPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
                 return authoritativePartialTickRef.get();
+            }
+        }
+    }
+
+    private static class GameLevelMixin {
+        @Mixin(LevelRenderer.class)
+        private static class LevelRendererMixin {
+            @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 0))
+            private float wrapLevelPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original) {
+                return MixinHandler.callWithScale(original, instance, runsNormally);
             }
         }
     }
@@ -159,20 +150,15 @@ public class PartialTickMixin {
     private static class GameEntityMixin {
         @Mixin(LevelRenderer.class)
         private static class LevelRendererMixin {
-            @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;isEntityFrozen(Lnet/minecraft/world/entity/Entity;)Z"))
-            private boolean wrapEntityFrozen(TickRateManager instance, Entity entity, Operation<Boolean> original) {
-                return TimeScaleHandler.isEntityOriginalFrozen(entity);
-            }
-
             @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 1))
             private float wrapEntityPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original, @Local Entity entity) {
                 return TimeScaleHandler.isEntityScalableFrozen(entity)
-                        ? original.call(instance, runsNormally)
-                        : TimeScaleHandler.getOriginalPartialTick(true);
+                        ? MixinHandler.callWithScale(original, instance, runsNormally)
+                        : original.call(instance, runsNormally);
             }
 
             @Inject(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D", ordinal = 0))
-            private void onPositionLerp(Entity entity, double camX, double camY, double camZ, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
+            private void onEntityPositionLerp(Entity entity, double camX, double camY, double camZ, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
                 var authoritativePartialTick = TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
@@ -180,7 +166,7 @@ public class PartialTickMixin {
             }
 
             @ModifyArg(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D"), index = 0)
-            private double modifyPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
+            private double modifyEntityPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
                 return authoritativePartialTickRef.get();
             }
         }
