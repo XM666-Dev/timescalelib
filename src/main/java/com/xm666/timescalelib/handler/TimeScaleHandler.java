@@ -19,9 +19,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class TimeScaleHandler {
     public static ScalableTimer.Client clientTimer;
     public static ScalableTimer.Server serverTimer;
-    public static boolean scaleRunNormally = true;
+    public static boolean scaleRunNormally = false;
     public static boolean disableRunNormally = false;
-    public static boolean scalePartialTick = true;
+    public static boolean scalePartialTick = false;
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -82,23 +82,21 @@ public class TimeScaleHandler {
         return isClientSide ? clientTimer : serverTimer;
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "BooleanMethodIsAlwaysInverted"})
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
+        var tickRateManager = mc.level.tickRateManager();
 
-        TimeScaleHandler.scaleRunNormally = false;
-        var frozen = mc.level.tickRateManager().isEntityFrozen(entity);
-        TimeScaleHandler.scaleRunNormally = true;
-
-        return frozen;
+        return tickRateManager.isEntityFrozen(entity);
     }
 
     @SuppressWarnings("DataFlowIssue")
     public static boolean isEntityScalableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
+        var tickRateManager = mc.level.tickRateManager();
 
         TimeScaleHandler.disableRunNormally = true;
-        var frozen = mc.level.tickRateManager().isEntityFrozen(entity);
+        var frozen = tickRateManager.isEntityFrozen(entity);
         TimeScaleHandler.disableRunNormally = false;
 
         return frozen;
@@ -107,27 +105,23 @@ public class TimeScaleHandler {
     @SuppressWarnings("DataFlowIssue")
     public static boolean isEntityAuthoritativeFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
+        var tickRateManager = mc.level.tickRateManager();
 
         TimeScaleHandler.disableRunNormally = true;
-        var frozen = mc.level.tickRateManager().isEntityFrozen(entity) || TimeScaleHandler.clientTimer.scalesTravelling(entity);
+        var frozen = tickRateManager.isEntityFrozen(entity) || TimeScaleHandler.clientTimer.scalesTravelling(entity);
         TimeScaleHandler.disableRunNormally = false;
 
         return frozen;
     }
 
-    public static float getOriginalPartialTick(boolean runsNormally) {
-        var mc = Minecraft.getInstance();
-
-        TimeScaleHandler.scalePartialTick = false;
-        var partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(runsNormally);
-        TimeScaleHandler.scalePartialTick = true;
-
-        return partialTick;
-    }
-
     public static float getScalablePartialTick(boolean runsNormally) {
         var mc = Minecraft.getInstance();
+        var timer = mc.getTimer();
 
-        return mc.getDeltaTracker().getGameTimeDeltaPartialTick(runsNormally);
+        TimeScaleHandler.scalePartialTick = true;
+        var partialTick = timer.getGameTimeDeltaPartialTick(runsNormally);
+        TimeScaleHandler.scalePartialTick = false;
+
+        return partialTick;
     }
 }
