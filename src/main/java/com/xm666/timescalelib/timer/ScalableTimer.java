@@ -58,7 +58,7 @@ public abstract class ScalableTimer {
         return scale;
     }
 
-    public boolean runsTraveling(Entity entity) {
+    public boolean runsTravelling(Entity entity) {
         return !scalesTravelling(entity) || runTick;
     }
 

@@ -4,7 +4,11 @@
   "plugin": "com.xm666.timescalelib.MixinConfigPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "timescalelib.TickMixin$LevelMixin",
     "timescalelib.TickMixin$LivingEntityMixin",
+    "timescalelib.TickMixin$ServerChunkCacheMixin",
+    "timescalelib.TickMixin$ServerLevelMixin",
+    "timescalelib.TickMixin$ServerPlayerMixin",
     "timescalelib.TickMixin$TickRateManagerMixin"
   ],
   "injectors": {
@@ -21,7 +25,7 @@
     "punchy.GameTimeMixin$SpearStateMachineMixin",
     "punchy.GameTimeMixin$UseDurationMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
-    "timescalelib.PartialTickMixin$AbstractClientPlayerMixin",
+    "timescalelib.PartialTickMixin$GameBobMixin$AbstractClientPlayerMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$GameRendererMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$EntityMixin",
@@ -29,9 +33,12 @@
     "timescalelib.PartialTickMixin$GameEntityMixin$LevelRendererMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$LivingEntityMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$LivingEntityRendererMixin",
-    "timescalelib.PartialTickMixin$GameRendererMixin",
-    "timescalelib.PartialTickMixin$GameTimerMixin$MinecraftMixin",
+    "timescalelib.PartialTickMixin$GameLevelMixin$LevelRendererMixin",
     "timescalelib.PartialTickMixin$GameTimerMixin$TimerMixin",
-    "timescalelib.PartialTickMixin$GameViewMixin$GameRendererMixin"
+    "timescalelib.PartialTickMixin$GameViewMixin$GameRendererMixin",
+    "timescalelib.TickMixin$ClientLevelMixin",
+    "timescalelib.TickMixin$GameRendererMixin",
+    "timescalelib.TickMixin$LevelRendererMixin",
+    "timescalelib.TickMixin$MinecraftMixin"
   ]
 }

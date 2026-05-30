@@ -116,7 +116,7 @@ public class TimeScaleHandler {
 
     public static float getScalablePartialTick(boolean runsNormally) {
         var mc = Minecraft.getInstance();
-        var timer = mc.getTimer();
+        var timer = mc.getDeltaTracker();
 
         TimeScaleHandler.scalePartialTick = true;
         var partialTick = timer.getGameTimeDeltaPartialTick(runsNormally);
