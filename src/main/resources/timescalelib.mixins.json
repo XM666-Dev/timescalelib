@@ -7,6 +7,7 @@
     "timescalelib.TickMixin$LevelMixin",
     "timescalelib.TickMixin$LivingEntityMixin",
     "timescalelib.TickMixin$ServerChunkCacheMixin",
+    "timescalelib.TickMixin$ServerFunctionManagerMixin",
     "timescalelib.TickMixin$ServerLevelMixin",
     "timescalelib.TickMixin$ServerPlayerMixin",
     "timescalelib.TickMixin$TickRateManagerMixin"

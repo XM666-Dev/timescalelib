@@ -53,7 +53,7 @@ public class PartialTickMixin {
         @Mixin(AbstractClientPlayer.class)
         private static class AbstractClientPlayerMixin {
             @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/ClientAvatarState;tick(Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;)V"))
-            private boolean wrapTick(ClientAvatarState instance, Vec3 position, Vec3 deltaMovement) {
+            private boolean wrapWalkDist(ClientAvatarState instance, Vec3 position, Vec3 deltaMovement) {
                 return TimeScaleHandler.clientTimer.runsTravelling((Entity) (Object) this);
             }
 
