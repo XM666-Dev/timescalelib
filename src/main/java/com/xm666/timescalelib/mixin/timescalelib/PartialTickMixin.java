@@ -54,17 +54,22 @@ public class PartialTickMixin {
         private static class EntityMixin {
             @WrapWithCondition(method = "baseTick", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;walkDistO:F", opcode = Opcodes.PUTFIELD))
             private boolean wrapWalkDistO(Entity instance, float value) {
-                return TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
+                return TimeScaleHandler.clientTimer.runsTravelling(instance);
             }
         }
 
-        @Mixin(GameRenderer.class)
-        private static class GameRendererMixin {
-            @ModifyArg(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"), index = 0)
-            private float modifyBobLerpDelta(float delta, @Local Player player) {
-                return TimeScaleHandler.isEntityScalableFrozen(player)
-                        ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(player))
-                        : delta;
+        @Mixin(Player.class)
+        private static class PlayerMixin {
+            @WrapWithCondition(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;oBob:F", opcode = Opcodes.PUTFIELD))
+            private boolean wrapOBob(Player instance, float value, @Share("set") LocalBooleanRef setRef) {
+                var set = TimeScaleHandler.clientTimer.runsTravelling(instance);
+                setRef.set(set);
+                return set;
+            }
+
+            @WrapWithCondition(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;bob:F", opcode = Opcodes.PUTFIELD))
+            private boolean wrapBob(Player instance, float value, @Share("set") LocalBooleanRef setRef) {
+                return setRef.get();
             }
         }
     }
@@ -174,19 +179,19 @@ public class PartialTickMixin {
         @Mixin(Entity.class)
         private static class EntityMixin {
             @WrapWithCondition(method = "setOldPosAndRot", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;xo:D", opcode = Opcodes.PUTFIELD))
-            private boolean wrapXo(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
-                var set = TimeScaleHandler.clientTimer.runsTraveling((Entity) (Object) this);
+            private boolean wrapXO(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
+                var set = TimeScaleHandler.clientTimer.runsTravelling((Entity) (Object) this);
                 setRef.set(set);
                 return set;
             }
 
             @WrapWithCondition(method = "setOldPosAndRot", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;yo:D", opcode = Opcodes.PUTFIELD))
-            private boolean wrapYo(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
+            private boolean wrapYO(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
                 return setRef.get();
             }
 
             @WrapWithCondition(method = "setOldPosAndRot", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Entity;zo:D", opcode = Opcodes.PUTFIELD))
-            private boolean wrapZo(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
+            private boolean wrapZO(Entity instance, double value, @Share("set") LocalBooleanRef setRef) {
                 return setRef.get();
             }
 

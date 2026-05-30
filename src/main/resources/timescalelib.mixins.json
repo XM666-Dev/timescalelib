@@ -6,7 +6,10 @@
   "mixins": [
     "timescalelib.TickMixin$LevelMixin",
     "timescalelib.TickMixin$LivingEntityMixin",
+    "timescalelib.TickMixin$ServerChunkCacheMixin",
+    "timescalelib.TickMixin$ServerFunctionManagerMixin",
     "timescalelib.TickMixin$ServerLevelMixin",
+    "timescalelib.TickMixin$ServerPlayerMixin",
     "timescalelib.TickMixin$TickRateManagerMixin"
   ],
   "injectors": {
@@ -24,7 +27,7 @@
     "punchy.GameTimeMixin$SpearStateMachineMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
     "timescalelib.PartialTickMixin$GameBobMixin$EntityMixin",
-    "timescalelib.PartialTickMixin$GameBobMixin$GameRendererMixin",
+    "timescalelib.PartialTickMixin$GameBobMixin$PlayerMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$GameRendererMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$EntityMixin",
