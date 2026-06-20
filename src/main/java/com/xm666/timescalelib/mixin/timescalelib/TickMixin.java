@@ -26,7 +26,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public class TickMixin {
     @Mixin(TickRateManager.class)
     private static class TickRateManagerMixin {
-        @SuppressWarnings("ConstantValue")
         @ModifyReturnValue(method = "runsNormally", at = @At("RETURN"))
         private boolean modifyRunsNormally(boolean original) {
             var timer = TimeScaleHandler.getTimer(!((Object) this instanceof ServerTickRateManager));

@@ -82,7 +82,6 @@ public class TimeScaleHandler {
         return isClientSide ? clientTimer : serverTimer;
     }
 
-    @SuppressWarnings({"DataFlowIssue", "BooleanMethodIsAlwaysInverted"})
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = mc.level.tickRateManager();
@@ -90,7 +89,6 @@ public class TimeScaleHandler {
         return tickRateManager.isEntityFrozen(entity);
     }
 
-    @SuppressWarnings("DataFlowIssue")
     public static boolean isEntityScalableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = mc.level.tickRateManager();
@@ -102,7 +100,6 @@ public class TimeScaleHandler {
         return frozen;
     }
 
-    @SuppressWarnings("DataFlowIssue")
     public static boolean isEntityAuthoritativeFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = mc.level.tickRateManager();
