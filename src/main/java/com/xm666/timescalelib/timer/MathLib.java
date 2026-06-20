@@ -3,7 +3,6 @@ package com.xm666.timescalelib.timer;
 import net.minecraft.util.Mth;
 
 public class MathLib {
-    @SuppressWarnings("SameParameterValue")
     public static float clampedInverseLerp(float delta, float start, float end) {
         var inverseDelta = Mth.inverseLerp(delta, start, end);
         return Mth.clamp(inverseDelta, 0.0F, 1.0F);
