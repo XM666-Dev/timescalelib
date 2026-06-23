@@ -7,8 +7,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.xm666.timescalelib.TimeScaleLib;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
 import com.xm666.timescalelib.handler.WrapHandler;
 import net.minecraft.client.Camera;

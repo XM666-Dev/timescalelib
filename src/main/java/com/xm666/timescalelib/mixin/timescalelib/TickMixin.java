@@ -109,7 +109,7 @@ public class TickMixin {
     private static class MinecraftMixin {
         @WrapOperation(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isLevelRunningNormally()Z", ordinal = 0))
         private boolean wrapTextureRunsNormally(Minecraft instance, Operation<Boolean> original) {
-            return MixinHandler.callWithScale(original, instance);
+            return WrapHandler.callWithScale(original, instance);
         }
 
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isLevelRunningNormally()Z"))
