@@ -19,6 +19,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "entity_model_features.TickDeltaMixin",
     "physicsmod.PlaybackMixin",
     "punchy.GameTimeMixin$AttackStateMachineMixin",
     "punchy.GameTimeMixin$ItemPropertiesMixin",
