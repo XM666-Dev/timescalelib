@@ -11,9 +11,11 @@ public record ApplyScalePayload(
         float scale,
         int duration,
         int transition,
-        int targetEntity
+        int target
 ) implements CustomPacketPayload {
-    public static final Type<ApplyScalePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TimeScaleLib.MODID, "apply_scale"));
+    public static final Type<ApplyScalePayload> TYPE = new Type<>(
+            ResourceLocation.fromNamespaceAndPath(TimeScaleLib.MODID, "apply_scale")
+    );
     public static final StreamCodec<ByteBuf, ApplyScalePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT,
             ApplyScalePayload::scale,
@@ -22,7 +24,7 @@ public record ApplyScalePayload(
             ByteBufCodecs.VAR_INT,
             ApplyScalePayload::transition,
             ByteBufCodecs.VAR_INT,
-            ApplyScalePayload::targetEntity,
+            ApplyScalePayload::target,
             ApplyScalePayload::new
     );
 

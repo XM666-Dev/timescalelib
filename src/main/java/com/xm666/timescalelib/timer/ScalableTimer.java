@@ -14,12 +14,20 @@ public abstract class ScalableTimer {
     private boolean runTick;
     private float deltaTickResidual;
 
-    private float getDefaultScale() {
+    public static float getDefaultScale() {
         return 1.0F;
     }
 
-    public int getDefaultTransition() {
+    public static int getDefaultTransition() {
         return 20;
+    }
+
+    public void tick() {
+        var nextScale = calculateScale();
+        var nextDeltaTickResidual = deltaTickResidual + nextScale;
+        scale = nextScale;
+        runTick = nextDeltaTickResidual >= 1.0F;
+        deltaTickResidual = Mth.frac(nextDeltaTickResidual);
     }
 
     private float calculateScale() {
@@ -31,19 +39,16 @@ public abstract class ScalableTimer {
                 .orElse(1.0F);
     }
 
-    public void tick() {
-        var nextScale = calculateScale();
-        var nextDeltaTickResidual = deltaTickResidual + nextScale;
-        scale = nextScale;
-        runTick = nextDeltaTickResidual >= 1.0F;
-        deltaTickResidual = Mth.frac(nextDeltaTickResidual);
+    public void addScaler(float scale, int duration, int transition, Entity target) {
+        addScaler(new DefaultScaler(scale, duration, transition, target, getTickCount()));
     }
 
-    public void addScaler(float scale, int duration, int transition, Entity target) {
-        var finalScale = Mth.clamp(scale, 0.0F, 1.0F);
-        var finalEnd = duration != -1 ? getTickCount() + duration + 1 : -1;
-        var finalTransition = transition != -1 ? Math.min(transition, duration) : duration;
-        scalers.add(new Scaler(finalScale, finalEnd, finalTransition, target));
+    public void addScaler(Scaler scaler) {
+        scalers.add(scaler);
+    }
+
+    public void removeScaler(Scaler scaler) {
+        scalers.remove(scaler);
     }
 
     public void clearScaler() {

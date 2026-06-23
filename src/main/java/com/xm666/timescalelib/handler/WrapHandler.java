@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 
-public class MixinHandler {
+public class WrapHandler {
     public static boolean callWithScale(Operation<Boolean> original, TickRateManager instance) {
         TimeScaleHandler.scaleRunNormally = true;
         var runsNormally = original.call(instance);

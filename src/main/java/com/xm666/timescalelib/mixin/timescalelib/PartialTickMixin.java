@@ -10,8 +10,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.xm666.timescalelib.TimeScaleLib;
-import com.xm666.timescalelib.handler.MixinHandler;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
+import com.xm666.timescalelib.handler.WrapHandler;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -147,7 +147,7 @@ public class PartialTickMixin {
         private static class LevelRendererMixin {
             @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 0))
             private float wrapLevelPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original) {
-                return MixinHandler.callWithScale(original, instance, runsNormally);
+                return WrapHandler.callWithScale(original, instance, runsNormally);
             }
         }
     }
@@ -158,7 +158,7 @@ public class PartialTickMixin {
             @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 1))
             private float wrapEntityPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original, @Local Entity entity) {
                 return TimeScaleHandler.isEntityScalableFrozen(entity)
-                        ? MixinHandler.callWithScale(original, instance, runsNormally)
+                        ? WrapHandler.callWithScale(original, instance, runsNormally)
                         : original.call(instance, runsNormally);
             }
 

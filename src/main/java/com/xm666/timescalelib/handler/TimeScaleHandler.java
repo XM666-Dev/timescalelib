@@ -49,28 +49,29 @@ public class TimeScaleHandler {
 
     public static void handlePayload(final ApplyScalePayload payload, final IPayloadContext context) {
         var level = context.player().level();
-        clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition(), level.getEntity(payload.targetEntity()));
+        clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition(), level.getEntity(payload.target()));
     }
 
     public static void handlePayload(final RemoveScalePayload payload, final IPayloadContext context) {
         clientTimer.clearScaler();
     }
 
-    public static void applyScale(float scale, int scaleTicks) {
-        applyScale(null, scale, scaleTicks, serverTimer.getDefaultTransition());
+    public static void applyScale(float scale, int duration) {
+        applyScale(null, scale, duration, ScalableTimer.getDefaultTransition());
     }
 
-    public static void applyScale(float scale, int scaleTicks, int transition) {
-        applyScale(null, scale, scaleTicks, transition);
+    public static void applyScale(float scale, int duration, int transition) {
+        applyScale(null, scale, duration, transition);
     }
 
-    public static void applyScale(Entity entity, float scale, int scaleTicks) {
-        applyScale(entity, scale, scaleTicks, serverTimer.getDefaultTransition());
+    public static void applyScale(Entity target, float scale, int duration) {
+        applyScale(target, scale, duration, ScalableTimer.getDefaultTransition());
     }
 
-    public static void applyScale(Entity entity, float scale, int scaleTicks, int transition) {
-        serverTimer.addScaler(scale, scaleTicks, transition, entity);
-        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, scaleTicks, transition, entity != null ? entity.getId() : 0));
+    public static void applyScale(Entity target, float scale, int duration, int transition) {
+        var targetId = target != null ? target.getId() : 0;
+        serverTimer.addScaler(scale, duration, transition, target);
+        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, duration, transition, targetId));
     }
 
     public static void removeScale() {
