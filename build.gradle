@@ -150,6 +150,8 @@ dependencies {
     implementation jarJar("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.2")
     compileOnly "curse.maven:punchy-1374153:8103833"
     compileOnly "curse.maven:physics-mod-442735:7972134"
+    compileOnly "curse.maven:entity-model-features-844662:8063560"
+    compileOnly "curse.maven:entity-texture-features-fabric-568563:7930637"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

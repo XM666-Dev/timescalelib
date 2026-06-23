@@ -26,9 +26,11 @@ public class TickDeltaMixin {
 
     @WrapOperation(method = "getTickDelta", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker$Timer;getGameTimeDeltaPartialTick(Z)F"))
     private static float wrapPartialTick(DeltaTracker.Timer instance, boolean runsNormally, Operation<Float> original) {
+        var entity = (Entity) emfEntity();
+        if (entity == null) return original.call(instance, runsNormally);
+
         var mc = Minecraft.getInstance();
         var tickRateManager = mc.level.tickRateManager();
-        var entity = (Entity) emfEntity();
         var entityRunsNormally = !tickRateManager.isEntityFrozen(entity);
         return TimeScaleHandler.isEntityScalableFrozen(entity)
                 ? WrapHandler.callWithScale(original, instance, entityRunsNormally)
