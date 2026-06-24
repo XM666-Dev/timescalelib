@@ -6,7 +6,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public abstract class ScalableTimer {
     private final ArrayList<Scaler> scalers = new ArrayList<>();
@@ -23,19 +22,19 @@ public abstract class ScalableTimer {
     }
 
     public void tick() {
-        var nextScale = calculateScale();
+        var nextScale = nextScale();
         var nextDeltaTickResidual = deltaTickResidual + nextScale;
         scale = nextScale;
         runTick = nextDeltaTickResidual >= 1.0F;
         deltaTickResidual = Mth.frac(nextDeltaTickResidual);
     }
 
-    private float calculateScale() {
+    private float nextScale() {
         var tickCount = getTickCount();
         scalers.removeIf((scaler -> scaler.isEnd(tickCount)));
         return getDefaultScale() * scalers.stream()
-                .min(Comparator.comparing((scaler -> scaler.getScale(tickCount))))
                 .map(scaler -> scaler.getScale(tickCount))
+                .min(Float::compareTo)
                 .orElse(1.0F);
     }
 
