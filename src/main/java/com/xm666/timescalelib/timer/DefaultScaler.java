@@ -18,7 +18,7 @@ public class DefaultScaler implements Scaler {
 
     @Override
     public float getScale(int tickCount) {
-        if (end == -1) return scale;
+        if (end == -1 || transition == 0) return scale;
 
         var remainingTicks = end - tickCount;
         var delta = MathLib.clampedInverseLerp(remainingTicks, transition, 0);
