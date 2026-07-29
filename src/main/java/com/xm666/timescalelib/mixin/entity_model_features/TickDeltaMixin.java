@@ -33,7 +33,7 @@ public class TickDeltaMixin {
         var tickRateManager = mc.level.tickRateManager();
         var entityRunsNormally = !tickRateManager.isEntityFrozen(entity);
         return TimeScaleHandler.isEntityScalableFrozen(entity)
-                ? WrapHandler.callWithScale(original, instance, entityRunsNormally)
+                ? WrapHandler.callScaled(original, instance, entityRunsNormally)
                 : original.call(instance, entityRunsNormally);
     }
 }

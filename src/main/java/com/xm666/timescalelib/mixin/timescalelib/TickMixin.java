@@ -46,12 +46,12 @@ public class TickMixin {
     private static class ClientLevelMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapClientRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
 
         @WrapOperation(method = "lambda$tickEntities$4", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;isEntityFrozen(Lnet/minecraft/world/entity/Entity;)Z"))
         private boolean wrapClientEntityFrozen(TickRateManager instance, Entity entity, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance, entity);
+            return WrapHandler.callScaled(original, instance, entity);
         }
     }
 
@@ -59,12 +59,12 @@ public class TickMixin {
     private static class ServerLevelMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapServerRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
 
         @WrapOperation(method = "lambda$tick$2", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;isEntityFrozen(Lnet/minecraft/world/entity/Entity;)Z"))
         private boolean wrapServerEntityFrozen(TickRateManager instance, Entity entity, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance, entity);
+            return WrapHandler.callScaled(original, instance, entity);
         }
     }
 
@@ -72,7 +72,7 @@ public class TickMixin {
     private static class ServerFunctionManagerMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/ServerTickRateManager;runsNormally()Z"))
         private boolean wrapFunctionRunsNormally(ServerTickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -80,12 +80,12 @@ public class TickMixin {
     private static class ServerChunkCacheMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapCacheRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
 
         @WrapOperation(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapChunkRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -93,7 +93,7 @@ public class TickMixin {
     private static class ServerPlayerMixin {
         @WrapOperation(method = "pushEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapPlayerRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -101,7 +101,7 @@ public class TickMixin {
     private static class LevelMixin {
         @WrapOperation(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapBlockEntityRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -109,7 +109,7 @@ public class TickMixin {
     private static class MinecraftMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isLevelRunningNormally()Z"))
         private boolean wrapVisualRunsNormally(Minecraft instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -117,7 +117,7 @@ public class TickMixin {
     private static class GameRendererMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapGameRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 
@@ -125,7 +125,7 @@ public class TickMixin {
     private static class LevelRendererMixin {
         @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/TickRateManager;runsNormally()Z"))
         private boolean wrapLevelRunsNormally(TickRateManager instance, Operation<Boolean> original) {
-            return WrapHandler.callWithScale(original, instance);
+            return WrapHandler.callScaled(original, instance);
         }
     }
 }

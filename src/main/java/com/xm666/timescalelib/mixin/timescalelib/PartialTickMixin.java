@@ -147,7 +147,7 @@ public class PartialTickMixin {
         private static class LevelRendererMixin {
             @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 0))
             private float wrapLevelPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original) {
-                return WrapHandler.callWithScale(original, instance, runsNormally);
+                return WrapHandler.callScaled(original, instance, runsNormally);
             }
         }
     }
@@ -158,7 +158,7 @@ public class PartialTickMixin {
             @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 1))
             private float wrapEntityPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original, @Local Entity entity) {
                 return TimeScaleHandler.isEntityScalableFrozen(entity)
-                        ? WrapHandler.callWithScale(original, instance, runsNormally)
+                        ? WrapHandler.callScaled(original, instance, runsNormally)
                         : original.call(instance, runsNormally);
             }
 
