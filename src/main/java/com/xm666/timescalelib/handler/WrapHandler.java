@@ -1,9 +1,9 @@
 package com.xm666.timescalelib.handler;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import net.minecraft.client.DeltaTracker;
+import com.xm666.timescalelib.tick.DeltaTracker;
+import com.xm666.timescalelib.tick.TickRateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 
 public class WrapHandler {

@@ -1,35 +1,39 @@
 package com.xm666.timescalelib.network;
 
-import com.xm666.timescalelib.TimeScaleLib;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import com.xm666.timescalelib.handler.TimeScaleHandler;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public record ApplyScalePayload(
         float scale,
         int duration,
         int transition,
         int target
-) implements CustomPacketPayload {
-    public static final Type<ApplyScalePayload> TYPE = new Type<>(
-            ResourceLocation.fromNamespaceAndPath(TimeScaleLib.MODID, "apply_scale")
-    );
-    public static final StreamCodec<ByteBuf, ApplyScalePayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.FLOAT,
-            ApplyScalePayload::scale,
-            ByteBufCodecs.VAR_INT,
-            ApplyScalePayload::duration,
-            ByteBufCodecs.VAR_INT,
-            ApplyScalePayload::transition,
-            ByteBufCodecs.VAR_INT,
-            ApplyScalePayload::target,
-            ApplyScalePayload::new
-    );
+) {
+    public static void write(ApplyScalePayload msg, FriendlyByteBuf buf) {
+        buf.writeFloat(msg.scale);
+        buf.writeInt(msg.duration);
+        buf.writeInt(msg.transition);
+        buf.writeInt(msg.target);
+    }
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public static ApplyScalePayload read(FriendlyByteBuf buf) {
+        return new ApplyScalePayload(
+                buf.readFloat(),
+                buf.readInt(),
+                buf.readInt(),
+                buf.readInt()
+        );
+    }
+
+    public static void handle(ApplyScalePayload msg, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() ->
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> TimeScaleHandler.handlePayload(msg, ctx))
+        );
+        ctx.get().setPacketHandled(true);
     }
 }

@@ -3,19 +3,21 @@ package com.xm666.timescalelib.handler;
 import com.xm666.timescalelib.TimeScaleLib;
 import com.xm666.timescalelib.network.ApplyScalePayload;
 import com.xm666.timescalelib.network.RemoveScalePayload;
+import com.xm666.timescalelib.tick.TickHandler;
 import com.xm666.timescalelib.timer.ScalableTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
-@EventBusSubscriber(modid = TimeScaleLib.MODID)
+import java.util.function.Supplier;
+
+@Mod.EventBusSubscriber(modid = TimeScaleLib.MODID)
 public class TimeScaleHandler {
     public static ScalableTimer.Client clientTimer;
     public static ScalableTimer.Server serverTimer;
@@ -34,25 +36,26 @@ public class TimeScaleHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Pre event) {
-        if (clientTimer == null) return;
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.START || clientTimer == null) return;
 
         clientTimer.tick();
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Pre event) {
-        if (serverTimer == null) return;
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START || serverTimer == null) return;
 
         serverTimer.tick();
     }
 
-    public static void handlePayload(final ApplyScalePayload payload, final IPayloadContext context) {
-        var level = context.player().level();
+    public static void handlePayload(final ApplyScalePayload payload, final Supplier<NetworkEvent.Context> context) {
+        var mc = Minecraft.getInstance();
+        var level = mc.level;
         clientTimer.addScaler(payload.scale(), payload.duration(), payload.transition(), level.getEntity(payload.target()));
     }
 
-    public static void handlePayload(final RemoveScalePayload payload, final IPayloadContext context) {
+    public static void handlePayload(final RemoveScalePayload payload, final Supplier<NetworkEvent.Context> context) {
         clientTimer.clearScaler();
     }
 
@@ -71,12 +74,12 @@ public class TimeScaleHandler {
     public static void applyScale(Entity target, float scale, int duration, int transition) {
         var targetId = target != null ? target.getId() : 0;
         serverTimer.addScaler(scale, duration, transition, target);
-        PacketDistributor.sendToAllPlayers(new ApplyScalePayload(scale, duration, transition, targetId));
+        PayloadHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new ApplyScalePayload(scale, duration, transition, targetId));
     }
 
     public static void removeScale() {
         serverTimer.clearScaler();
-        PacketDistributor.sendToAllPlayers(new RemoveScalePayload());
+        PayloadHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RemoveScalePayload());
     }
 
     public static ScalableTimer getTimer(boolean isClientSide) {
@@ -85,14 +88,14 @@ public class TimeScaleHandler {
 
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = mc.level.tickRateManager();
+        var tickRateManager = TickHandler.getTickRateManager(mc.level);
 
         return tickRateManager.isEntityFrozen(entity);
     }
 
     public static boolean isEntityScalableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = mc.level.tickRateManager();
+        var tickRateManager = TickHandler.getTickRateManager(mc.level);
 
         TimeScaleHandler.disableRunNormally = true;
         var frozen = tickRateManager.isEntityFrozen(entity);
@@ -103,7 +106,7 @@ public class TimeScaleHandler {
 
     public static boolean isEntityAuthoritativeFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = mc.level.tickRateManager();
+        var tickRateManager = TickHandler.getTickRateManager(mc.level);
 
         TimeScaleHandler.disableRunNormally = true;
         var frozen = tickRateManager.isEntityFrozen(entity) || TimeScaleHandler.clientTimer.scalesTravelling(entity);
@@ -113,8 +116,7 @@ public class TimeScaleHandler {
     }
 
     public static float getScalablePartialTick(boolean runsNormally) {
-        var mc = Minecraft.getInstance();
-        var timer = mc.getTimer();
+        var timer = TickHandler.getTimer();
 
         TimeScaleHandler.scalePartialTick = true;
         var partialTick = timer.getGameTimeDeltaPartialTick(runsNormally);
