@@ -159,10 +159,10 @@ dependencies {
     }
     compileOnly annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.2")
     implementation jarJar("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.2")
-    implementation fg.deobf("curse.maven:punchy-1374153:8408049")
-    implementation fg.deobf("curse.maven:physics-mod-442735:8427046")
-    implementation fg.deobf("curse.maven:entity-model-features-844662:8063556")
-    implementation fg.deobf("curse.maven:entity-texture-features-fabric-568563:7930617")
+    compileOnly fg.deobf("curse.maven:punchy-1374153:8408049")
+    compileOnly fg.deobf("curse.maven:physics-mod-442735:8427046")
+    compileOnly fg.deobf("curse.maven:entity-model-features-844662:8063556")
+    compileOnly fg.deobf("curse.maven:entity-texture-features-fabric-568563:7930617")
 }
 
 mixin {

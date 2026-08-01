@@ -3,7 +3,7 @@ package com.xm666.timescalelib.handler;
 import com.xm666.timescalelib.TimeScaleLib;
 import com.xm666.timescalelib.network.ApplyScalePayload;
 import com.xm666.timescalelib.network.RemoveScalePayload;
-import com.xm666.timescalelib.tick.TickHandler;
+import com.xm666.timescalelib.tickrate.TickRateHandler;
 import com.xm666.timescalelib.timer.ScalableTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -88,14 +88,14 @@ public class TimeScaleHandler {
 
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = TickHandler.getTickRateManager(mc.level);
+        var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
 
         return tickRateManager.isEntityFrozen(entity);
     }
 
     public static boolean isEntityScalableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = TickHandler.getTickRateManager(mc.level);
+        var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
 
         TimeScaleHandler.disableRunNormally = true;
         var frozen = tickRateManager.isEntityFrozen(entity);
@@ -106,7 +106,7 @@ public class TimeScaleHandler {
 
     public static boolean isEntityAuthoritativeFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
-        var tickRateManager = TickHandler.getTickRateManager(mc.level);
+        var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
 
         TimeScaleHandler.disableRunNormally = true;
         var frozen = tickRateManager.isEntityFrozen(entity) || TimeScaleHandler.clientTimer.scalesTravelling(entity);
@@ -116,7 +116,8 @@ public class TimeScaleHandler {
     }
 
     public static float getScalablePartialTick(boolean runsNormally) {
-        var timer = TickHandler.getTimer();
+        var mc = Minecraft.getInstance();
+        var timer = TickRateHandler.getTimer(mc);
 
         TimeScaleHandler.scalePartialTick = true;
         var partialTick = timer.getGameTimeDeltaPartialTick(runsNormally);

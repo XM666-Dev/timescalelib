@@ -1,9 +1,6 @@
 package com.xm666.timescalelib.mixin.timescalelib;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
@@ -11,9 +8,9 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.xm666.timescalelib.TimeScaleLib;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
-import com.xm666.timescalelib.handler.WrapHandler;
+import com.xm666.timescalelib.tickrate.DeltaTracker;
+import com.xm666.timescalelib.tickrate.TickRateHandler;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -24,8 +21,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,14 +36,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PartialTickMixin {
     @Mixin(DeltaTracker.Timer.class)
     private static class TimerMixin {
-        @ModifyReturnValue(method = "getGameTimeDeltaPartialTick", at = @At(value = "RETURN", ordinal = 1))
-        private float modifyPartialTick(float original) {
-            if (!TimeScaleHandler.scalePartialTick || TimeScaleHandler.clientTimer == null) return original;
-
-            var sequentialTick = TimeScaleHandler.clientTimer.getDeltaTickSequential();
-            var scale = Math.min(TimeScaleHandler.clientTimer.getScale(), 1.0F - sequentialTick);
-            return sequentialTick + original * scale;
-        }
     }
 
     private static class GameBobMixin {
@@ -90,7 +79,7 @@ public class PartialTickMixin {
             return scalablePartialTick;
         }
 
-        @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/Camera;FLorg/joml/Matrix4f;)V"))
+        @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/Camera;F)V"))
         private float modifyHandPartialTick(float original, @Share(value = "scalablePartialTick", namespace = TimeScaleLib.MODID) LocalFloatRef scalablePartialTickRef) {
             return scalablePartialTickRef.get();
         }
@@ -143,11 +132,11 @@ public class PartialTickMixin {
     }
 
     private static class GameLevelMixin {
-        @Mixin(LevelRenderer.class)
-        private static class LevelRendererMixin {
-            @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 0))
-            private float wrapLevelPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original) {
-                return WrapHandler.callScaled(original, instance, runsNormally);
+        @Mixin(GameRenderer.class)
+        private static class GameRendererMixin {
+            @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V"))
+            private float wrapLevelPartialTick(float partialTick) {
+                return TimeScaleHandler.getScalablePartialTick(true);
             }
         }
     }
@@ -155,11 +144,11 @@ public class PartialTickMixin {
     private static class GameEntityMixin {
         @Mixin(LevelRenderer.class)
         private static class LevelRendererMixin {
-            @WrapOperation(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/DeltaTracker;getGameTimeDeltaPartialTick(Z)F", ordinal = 1))
-            private float wrapEntityPartialTick(DeltaTracker instance, boolean runsNormally, Operation<Float> original, @Local Entity entity) {
+            @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;renderEntity(Lnet/minecraft/world/entity/Entity;DDDFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V"))
+            private float wrapEntityPartialTick(float partialTick, @Local Entity entity) {
                 return TimeScaleHandler.isEntityScalableFrozen(entity)
-                        ? WrapHandler.callScaled(original, instance, runsNormally)
-                        : original.call(instance, runsNormally);
+                        ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
+                        : TickRateHandler.timer.getGameTimeDeltaPartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity));
             }
 
             @Inject(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D", ordinal = 0))

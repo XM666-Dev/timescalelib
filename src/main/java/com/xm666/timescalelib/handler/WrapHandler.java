@@ -1,8 +1,8 @@
 package com.xm666.timescalelib.handler;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.xm666.timescalelib.tick.DeltaTracker;
-import com.xm666.timescalelib.tick.TickRateManager;
+import com.xm666.timescalelib.tickrate.DeltaTracker;
+import com.xm666.timescalelib.tickrate.TickRateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 

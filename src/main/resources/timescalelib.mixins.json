@@ -36,7 +36,7 @@
     "timescalelib.PartialTickMixin$GameEntityMixin$EntityRenderDispatcherMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$LevelRendererMixin",
     "timescalelib.PartialTickMixin$GameEntityMixin$LivingEntityRendererMixin",
-    "timescalelib.PartialTickMixin$GameLevelMixin$LevelRendererMixin",
+    "timescalelib.PartialTickMixin$GameLevelMixin$GameRendererMixin",
     "timescalelib.PartialTickMixin$GameRendererMixin",
     "timescalelib.PartialTickMixin$TimerMixin",
     "timescalelib.TickMixin$ClientLevelMixin",

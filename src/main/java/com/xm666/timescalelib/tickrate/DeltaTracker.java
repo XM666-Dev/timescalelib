@@ -1,4 +1,4 @@
-package com.xm666.timescalelib.tick;
+package com.xm666.timescalelib.tickrate;
 
 import it.unimi.dsi.fastutil.floats.FloatUnaryOperator;
 import net.minecraftforge.api.distmarker.Dist;
@@ -40,6 +40,7 @@ public interface DeltaTracker {
     class Timer implements DeltaTracker {
         private final float msPerTick;
         private final FloatUnaryOperator targetMsptProvider;
+        public boolean frozen;
         private float deltaTicks;
         private float deltaTickResidual;
         private float realtimeDeltaTicks;
@@ -47,7 +48,6 @@ public interface DeltaTracker {
         private long lastMs;
         private long lastUiMs;
         private boolean paused;
-        private boolean frozen;
 
         public Timer(float ticksPerSecond, long time, FloatUnaryOperator targetMsptProvider) {
             this.msPerTick = 1000.0F / ticksPerSecond;
@@ -108,11 +108,7 @@ public interface DeltaTracker {
         }
 
         public float getGameTimeDeltaPartialTick(boolean runsNormally) {
-            if (!runsNormally && this.frozen) {
-                return 1.0F;
-            } else {
-                return this.paused ? this.pausedDeltaTickResidual : this.deltaTickResidual;
-            }
+            return TickRateHandler.getModifiablePartialTick(this, runsNormally);
         }
 
         public float getRealtimeDeltaTicks() {

@@ -1,4 +1,4 @@
-package com.xm666.timescalelib.tick;
+package com.xm666.timescalelib.tickrate;
 
 import net.minecraft.util.TimeUtil;
 import net.minecraft.world.entity.Entity;
@@ -11,10 +11,6 @@ public class TickRateManager {
     protected int frozenTicksToRun = 0;
     protected boolean runGameElements = true;
     protected boolean isFrozen = false;
-
-    private static int countPlayerPassengers(Entity entity) {
-        return (int) entity.getIndirectPassengersStream().filter((p_185943_) -> p_185943_ instanceof Player).count();
-    }
 
     public void setTickRate(float tickRate) {
         this.tickrate = Math.max(tickRate, 1.0F);
@@ -34,7 +30,7 @@ public class TickRateManager {
     }
 
     public boolean runsNormally() {
-        return this.runGameElements;
+        return TickRateHandler.isModifiableRunsNormally(this);
     }
 
     public boolean isSteppingForward() {
@@ -65,7 +61,6 @@ public class TickRateManager {
     }
 
     public boolean isEntityFrozen(Entity entity) {
-        return !this.runsNormally() && !(entity instanceof Player) && countPlayerPassengers(entity) <= 0;
+        return !this.runsNormally() && !(entity instanceof Player) && TickRateHandler.countPlayerPassengers(entity) <= 0;
     }
 }
-
