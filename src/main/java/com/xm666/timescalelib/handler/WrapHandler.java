@@ -7,7 +7,7 @@ import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 
 public class WrapHandler {
-    public static boolean callWithScale(Operation<Boolean> original, TickRateManager instance) {
+    public static boolean callScaled(Operation<Boolean> original, TickRateManager instance) {
         TimeScaleHandler.scaleRunNormally = true;
         var runsNormally = original.call(instance);
         TimeScaleHandler.scaleRunNormally = false;
@@ -15,7 +15,7 @@ public class WrapHandler {
         return runsNormally;
     }
 
-    public static boolean callWithScale(Operation<Boolean> original, TickRateManager instance, Entity entity) {
+    public static boolean callScaled(Operation<Boolean> original, TickRateManager instance, Entity entity) {
         TimeScaleHandler.scaleRunNormally = true;
         var runsNormally = original.call(instance, entity);
         TimeScaleHandler.scaleRunNormally = false;
@@ -23,7 +23,7 @@ public class WrapHandler {
         return runsNormally;
     }
 
-    public static float callWithScale(Operation<Float> original, DeltaTracker instance, boolean runsNormally) {
+    public static float callScaled(Operation<Float> original, DeltaTracker instance, boolean runsNormally) {
         TimeScaleHandler.scalePartialTick = true;
         var partialTick = original.call(instance, runsNormally);
         TimeScaleHandler.scalePartialTick = false;
@@ -31,7 +31,7 @@ public class WrapHandler {
         return partialTick;
     }
 
-    public static boolean callWithScale(Operation<Boolean> original, Minecraft instance) {
+    public static boolean callScaled(Operation<Boolean> original, Minecraft instance) {
         TimeScaleHandler.scaleRunNormally = true;
         var runsNormally = original.call(instance);
         TimeScaleHandler.scaleRunNormally = false;
