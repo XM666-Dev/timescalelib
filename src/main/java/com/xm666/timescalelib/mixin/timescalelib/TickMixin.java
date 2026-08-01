@@ -34,7 +34,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class TickMixin {
     @Mixin(TickRateManager.class)
@@ -67,9 +66,11 @@ public class TickMixin {
             return TickRateHandler.isScalableRunsNormally(TickRateHandler.clientTickRateManager);
         }
 
-        @WrapWithCondition(method = "lambda$tickEntities$4", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;guardEntityTick(Ljava/util/function/Consumer;Lnet/minecraft/world/entity/Entity;)V"))
-        private boolean wrapClientEntityFrozen(ClientLevel instance, Consumer<?> consumer, Entity entity) {
-            return !TickRateHandler.isScalableEntityFrozen(TickRateHandler.clientTickRateManager, entity);
+        @WrapMethod(method = "tickNonPassenger")
+        private void wrapClientEntityFrozen(Entity entity, Operation<Void> original) {
+            if (TickRateHandler.isScalableEntityFrozen(TickRateHandler.clientTickRateManager, entity)) return;
+
+            original.call(entity);
         }
     }
 
@@ -110,9 +111,11 @@ public class TickMixin {
             return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
         }
 
-        @WrapWithCondition(method = "lambda$tick$6", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;guardEntityTick(Ljava/util/function/Consumer;Lnet/minecraft/world/entity/Entity;)V"))
-        private boolean wrapServerEntityFrozen(ServerLevel instance, Consumer<?> consumer, Entity entity) {
-            return !TickRateHandler.isScalableEntityFrozen(TickRateHandler.serverTickRateManager, entity);
+        @WrapMethod(method = "tickNonPassenger")
+        private void wrapServerEntityFrozen(Entity entity, Operation<Void> original) {
+            if (TickRateHandler.isScalableEntityFrozen(TickRateHandler.serverTickRateManager, entity)) return;
+
+            original.call(entity);
         }
     }
 
