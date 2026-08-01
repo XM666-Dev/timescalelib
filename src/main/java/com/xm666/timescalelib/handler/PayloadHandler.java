@@ -15,7 +15,7 @@ import java.util.Optional;
 public class PayloadHandler {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            ResourceLocation.fromNamespaceAndPath(TimeScaleLib.MODID, "main"),
+            new ResourceLocation(TimeScaleLib.MODID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
