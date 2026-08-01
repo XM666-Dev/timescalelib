@@ -157,8 +157,10 @@ dependencies {
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.4")) {
         jarJar.ranged(it, "[0.5.4,)")
     }
-    compileOnly annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.2")
-    implementation jarJar("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.2")
+    compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.2"))
+    implementation(jarJar("com.github.bawnorton.mixinsquared:mixinsquared-forge:0.3.7-beta.2")) {
+        jarJar.ranged(it, "[0.3.7-beta.2,)")
+    }
     compileOnly fg.deobf("curse.maven:punchy-1374153:8408049")
     compileOnly fg.deobf("curse.maven:physics-mod-442735:8427046")
     compileOnly fg.deobf("curse.maven:entity-model-features-844662:8063556")
