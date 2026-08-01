@@ -87,7 +87,7 @@ public class PartialTickMixin {
         @ModifyArg(method = "renderItemInHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
         private float modifyHandBobPartialTick(float partialTick) {
             var entity = minecraft.getCameraEntity();
-            return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+            return TimeScaleHandler.isEntityEnforceableFrozen(entity)
                     ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                     : partialTick;
         }
@@ -108,7 +108,7 @@ public class PartialTickMixin {
             @ModifyArg(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
             private float modifyCameraBobPartialTick(float partialTick) {
                 var entity = minecraft.getCameraEntity();
-                return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+                return TimeScaleHandler.isEntityEnforceableFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
             }
@@ -117,16 +117,16 @@ public class PartialTickMixin {
         @Mixin(Camera.class)
         private static class CameraMixin {
             @Inject(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D", ordinal = 0))
-            private void onCameraPositionLerp(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                var authoritativePartialTick = TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+            private void onCameraPositionLerp(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                var enforceablePartialTick = TimeScaleHandler.isEntityEnforceableFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
-                authoritativePartialTickRef.set(authoritativePartialTick);
+                enforceablePartialTickRef.set(enforceablePartialTick);
             }
 
             @ModifyArg(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D"), index = 0)
-            private double modifyCameraPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                return authoritativePartialTickRef.get();
+            private double modifyCameraPositionLerpDelta(double delta, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                return enforceablePartialTickRef.get();
             }
         }
     }
@@ -152,16 +152,16 @@ public class PartialTickMixin {
             }
 
             @Inject(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D", ordinal = 0))
-            private void onEntityPositionLerp(Entity entity, double camX, double camY, double camZ, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                var authoritativePartialTick = TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+            private void onEntityPositionLerp(Entity entity, double camX, double camY, double camZ, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                var enforceablePartialTick = TimeScaleHandler.isEntityEnforceableFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
-                authoritativePartialTickRef.set(authoritativePartialTick);
+                enforceablePartialTickRef.set(enforceablePartialTick);
             }
 
             @ModifyArg(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(DDD)D"), index = 0)
-            private double modifyEntityPositionLerpDelta(double delta, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                return authoritativePartialTickRef.get();
+            private double modifyEntityPositionLerpDelta(double delta, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                return enforceablePartialTickRef.get();
             }
         }
 
@@ -203,17 +203,17 @@ public class PartialTickMixin {
         @Mixin(LivingEntityRenderer.class)
         private static class LivingEntityRendererMixin {
             @ModifyArg(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;speed(F)F"))
-            private float modifySpeedPartialTick(float partialTick, @Local(argsOnly = true) LivingEntity entity, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                var authoritativePartialTick = TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+            private float modifySpeedPartialTick(float partialTick, @Local(argsOnly = true) LivingEntity entity, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                var enforceablePartialTick = TimeScaleHandler.isEntityEnforceableFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
-                authoritativePartialTickRef.set(authoritativePartialTick);
-                return authoritativePartialTick;
+                enforceablePartialTickRef.set(enforceablePartialTick);
+                return enforceablePartialTick;
             }
 
             @ModifyArg(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;position(F)F"))
-            private float modifyPositionPartialTick(float partialTick, @Share("authoritativePartialTick") LocalFloatRef authoritativePartialTickRef) {
-                return authoritativePartialTickRef.get();
+            private float modifyPositionPartialTick(float partialTick, @Share("enforceablePartialTick") LocalFloatRef enforceablePartialTickRef) {
+                return enforceablePartialTickRef.get();
             }
         }
 
@@ -221,7 +221,7 @@ public class PartialTickMixin {
         private static class EntityRenderDispatcherMixin {
             @ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;renderShadow(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/Entity;FFLnet/minecraft/world/level/LevelReader;F)V"), index = 4)
             private float modifyShadowPartialTick(float partialTick, @Local(argsOnly = true) Entity entity) {
-                return TimeScaleHandler.isEntityAuthoritativeFrozen(entity)
+                return TimeScaleHandler.isEntityEnforceableFrozen(entity)
                         ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
                         : partialTick;
             }

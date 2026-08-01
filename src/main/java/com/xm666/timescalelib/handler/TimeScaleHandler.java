@@ -104,7 +104,7 @@ public class TimeScaleHandler {
         return frozen;
     }
 
-    public static boolean isEntityAuthoritativeFrozen(Entity entity) {
+    public static boolean isEntityEnforceableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
 
