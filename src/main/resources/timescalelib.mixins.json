@@ -20,6 +20,7 @@
   },
   "client": [
     "entity_model_features.TickDeltaMixin",
+    "epicfight.CameraMixin$EpicFightCameraAPIMixin",
     "physicsmod.PlaybackMixin",
     "punchy.GameTimeMixin$AttackStateMachineMixin",
     "punchy.GameTimeMixin$MiningStateMachineMixin",
