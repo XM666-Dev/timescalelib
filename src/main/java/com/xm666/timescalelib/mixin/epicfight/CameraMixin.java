@@ -4,15 +4,15 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
 import net.minecraft.client.Camera;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import yesman.epicfight.api.client.camera.EpicFightCameraAPI;
-import yesman.epicfight.api.client.event.types.camera.BuildCameraTransform;
+import yesman.epicfight.api.client.event.types.BuildCameraTransform;
 
 @OnlyIn(Dist.CLIENT)
 public class CameraMixin {
