@@ -15,9 +15,9 @@ import traben.entity_model_features.models.animation.EMFAnimationEntityContext;
 import traben.entity_model_features.utils.EMFEntity;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(value = EMFAnimationEntityContext.class, remap = false)
+@Mixin(EMFAnimationEntityContext.class)
 public class TickDeltaMixin {
-    @Shadow
+    @Shadow(remap = false)
     @Deprecated
     private static EMFEntity emfEntity() {
         throw new UnsupportedOperationException("Implemented via mixin");

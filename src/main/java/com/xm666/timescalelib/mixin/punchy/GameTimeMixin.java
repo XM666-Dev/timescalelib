@@ -17,7 +17,7 @@ import punchy.client.state.UseItemStateMachine;
 
 @OnlyIn(Dist.CLIENT)
 public class GameTimeMixin {
-    @Mixin(value = AttackStateMachine.class, remap = false)
+    @Mixin(AttackStateMachine.class)
     private static class AttackStateMachineMixin {
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
@@ -25,7 +25,7 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = MiningStateMachine.class, remap = false)
+    @Mixin(MiningStateMachine.class)
     private static class MiningStateMachineMixin {
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
@@ -33,7 +33,7 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = SpearStateMachine.class, remap = false)
+    @Mixin(SpearStateMachine.class)
     private static class SpearStateMachineMixin {
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
@@ -41,7 +41,7 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = UseItemStateMachine.class, remap = false)
+    @Mixin(UseItemStateMachine.class)
     private static class UseItemStateMachineMixin {
         @Redirect(method = "currentTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private long redirectGameTime(ClientLevel instance) {
@@ -49,7 +49,7 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = PunchyAnimationManager.class, remap = false)
+    @Mixin(PunchyAnimationManager.class)
     private static class PunchyAnimationManagerMixin {
         @Redirect(method = "updateUseMeshSuppression", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
         private static long redirectGameTime(ClientLevel instance) {
@@ -57,7 +57,7 @@ public class GameTimeMixin {
         }
     }
 
-    @Mixin(value = ItemProperties.class, priority = 2000, remap = false)
+    @Mixin(value = ItemProperties.class, priority = 2000)
     private static class ItemPropertiesMixin {
         @TargetHandler(mixin = "punchy.mixin.client.ItemPropertiesMixin", name = "resolveRemainingTicks")
         @Redirect(method = "@MixinSquared:Handler", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getGameTime()J"))
