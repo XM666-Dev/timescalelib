@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class CameraUpdateMixin {
     @Mixin(ThirdPersonPerspective.class)
     private static class ThirdPersonPerspectiveMixin {
-        @WrapOperation(method = "applyCameraState", at = @At(value = "INVOKE", target = "Lio/github/leawind/perspectiveapi/api/PerspectiveContext;partialTicks()F", ordinal = 0))
+        @WrapOperation(method = "applyCameraState", at = @At(value = "INVOKE", target = "Lio/github/leawind/perspectiveapi/api/PerspectiveContext;partialTicks()F"))
         private static float wrapPartialTick(PerspectiveContext instance, Operation<Float> original, @Local(name = "entity") Entity entity) {
             return TimeScaleHandler.isEntityEnforceableFrozen(entity)
                     ? TimeScaleHandler.getScalablePartialTick(!TimeScaleHandler.isEntityOriginalFrozen(entity))
