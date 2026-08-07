@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 public class CameraUpdateMixin {
-    @Mixin(ThirdPersonPerspective.class)
+    @Mixin(value = ThirdPersonPerspective.class, remap = false)
     private static class ThirdPersonPerspectiveMixin {
         @WrapOperation(method = "applyCameraState", at = @At(value = "INVOKE", target = "Lio/github/leawind/perspectiveapi/api/PerspectiveContext;partialTicks()F"))
         private static float wrapPartialTick(PerspectiveContext instance, Operation<Float> original, @Local(name = "entity") Entity entity) {
@@ -26,7 +26,7 @@ public class CameraUpdateMixin {
         }
     }
 
-    @Mixin(MinecraftClientIntegration.class)
+    @Mixin(value = MinecraftClientIntegration.class, remap = false)
     private static class MinecraftClientIntegrationMixin {
         @WrapWithCondition(method = "onClientTick", at = @At(value = "INVOKE", target = "Lio/github/leawind/thirdperson/internal/logic/base/camera/CameraPivotSmoother;updateTick(Lorg/joml/Vector3dc;DLio/github/leawind/thirdperson/internal/logic/base/camera/CameraSmoothingParameters;)Ljava/util/Optional;"))
         private static boolean wrapUpdateTick(CameraPivotSmoother instance, Vector3dc target, double deltaSeconds, CameraSmoothingParameters smoothing, @Local(name = "cameraEntity") Entity cameraEntity) {
