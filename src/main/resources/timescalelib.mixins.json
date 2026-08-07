@@ -5,6 +5,8 @@
   "plugin": "com.xm666.timescalelib.MixinConfigPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "leawind_third_person.CameraUpdateMixin$MinecraftClientIntegrationMixin",
+    "leawind_third_person.CameraUpdateMixin$ThirdPersonPerspectiveMixin",
     "timescalelib.TickMixin$LevelMixin",
     "timescalelib.TickMixin$LivingEntityMixin",
     "timescalelib.TickMixin$ServerChunkCacheMixin",
