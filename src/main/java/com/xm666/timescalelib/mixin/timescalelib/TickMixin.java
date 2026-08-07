@@ -1,9 +1,9 @@
 package com.xm666.timescalelib.mixin.timescalelib;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.xm666.timescalelib.handler.TimeScaleHandler;
 import com.xm666.timescalelib.tickrate.TickRateHandler;
 import com.xm666.timescalelib.tickrate.TickRateManager;
@@ -23,7 +23,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.raid.Raids;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.LevelTicks;
@@ -132,13 +134,33 @@ public class TickMixin {
     @Mixin(ServerChunkCache.class)
     private static class ServerChunkCacheMixin {
         @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/DistanceManager;purgeStaleTickets()V"))
-        private boolean wrapCacheRunsNormally(DistanceManager instance) {
+        private boolean wrapCacheRunsNormally(DistanceManager instance, @Local(argsOnly = true) boolean tickChunks) {
+            return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager) || !tickChunks;
+        }
+
+        @WrapWithCondition(method = "tickChunks", at = @At(value = "FIELD", target = "Lnet/minecraft/server/level/ServerChunkCache;lastSpawnState:Lnet/minecraft/world/level/NaturalSpawner$SpawnState;", opcode = Opcodes.PUTFIELD))
+        private boolean wrapChunkRunsNormally(ServerChunkCache instance, NaturalSpawner.SpawnState value) {
             return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
         }
 
-        @ModifyExpressionValue(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isDebug()Z"))
-        private boolean wrapChunkRunsNormally(boolean original) {
-            return original || !TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
+        @WrapWithCondition(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;incrementInhabitedTime(J)V"))
+        private boolean wrapChunkRunsNormally(LevelChunk instance, long amount) {
+            return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
+        }
+
+        @WrapWithCondition(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/NaturalSpawner;spawnForChunk(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/NaturalSpawner$SpawnState;ZZZ)V"))
+        private boolean wrapChunkRunsNormally(ServerLevel level, LevelChunk chunk, NaturalSpawner.SpawnState spawnState, boolean spawnFriendlies, boolean spawnMonsters, boolean forcedDespawn) {
+            return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
+        }
+
+        @WrapWithCondition(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tickChunk(Lnet/minecraft/world/level/chunk/LevelChunk;I)V"))
+        private boolean wrapChunkRunsNormally(ServerLevel instance, LevelChunk chunk, int randomTickSpeed) {
+            return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
+        }
+
+        @WrapWithCondition(method = "tickChunks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tickCustomSpawners(ZZ)V"))
+        private boolean wrapChunkRunsNormally(ServerLevel instance, boolean spawnEnemies, boolean spawnFriendlies) {
+            return TickRateHandler.isScalableRunsNormally(TickRateHandler.serverTickRateManager);
         }
     }
 
