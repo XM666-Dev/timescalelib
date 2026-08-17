@@ -7,6 +7,8 @@ import com.xm666.timescalelib.tickrate.TickRateHandler;
 import com.xm666.timescalelib.timer.ScalableTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -86,6 +88,7 @@ public class TimeScaleHandler {
         return isClientSide ? clientTimer : serverTimer;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static boolean isEntityOriginalFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
@@ -93,6 +96,7 @@ public class TimeScaleHandler {
         return tickRateManager.isEntityFrozen(entity);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static boolean isEntityScalableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = TickRateHandler.getTickRateManager(mc.level);
@@ -104,6 +108,7 @@ public class TimeScaleHandler {
         return frozen;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static boolean isEntityEnforceableFrozen(Entity entity) {
         var mc = Minecraft.getInstance();
         var tickRateManager = TickRateHandler.getTickRateManager(mc.level);

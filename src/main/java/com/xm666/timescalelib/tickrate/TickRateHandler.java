@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,6 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class TickRateHandler {
     public static TickRateManager clientTickRateManager;
     public static ServerTickRateManager serverTickRateManager;
+    @OnlyIn(Dist.CLIENT)
     public static DeltaTracker.Timer timer;
 
     @SubscribeEvent
@@ -32,6 +35,7 @@ public class TickRateHandler {
         return level.isClientSide() ? clientTickRateManager : serverTickRateManager;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static DeltaTracker.Timer getTimer(Minecraft minecraft) {
         return timer;
     }
@@ -56,6 +60,7 @@ public class TickRateHandler {
         return modifyRunsNormally(tickRateManager, true);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static float getModifiablePartialTick(DeltaTracker.Timer timer, boolean runsNormally) {
         if (!runsNormally && timer.frozen) {
             return 1.0F;
