@@ -161,7 +161,7 @@ dependencies {
     implementation(jarJar("com.github.bawnorton.mixinsquared:mixinsquared-forge:0.3.7-beta.3")) {
         jarJar.ranged(it, "[0.3.7-beta.3,)")
     }
-    compileOnly fg.deobf("curse.maven:punchy-1374153:8408049")
+    compileOnly fg.deobf("curse.maven:punchy-1374153:8891104")
     compileOnly fg.deobf("curse.maven:physics-mod-442735:8427046")
     compileOnly fg.deobf("curse.maven:entity-model-features-844662:8063556")
     compileOnly fg.deobf("curse.maven:entity-texture-features-fabric-568563:7930617")
