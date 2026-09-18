@@ -148,13 +148,13 @@ dependencies {
 
     compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:0.3.7-beta.3"))
     implementation(jarJar("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:0.3.7-beta.3"))
-    compileOnly "curse.maven:punchy-1374153:8104498"
+    compileOnly "curse.maven:punchy-1374153:8891106"
     compileOnly "curse.maven:physics-mod-442735:7977358"
     compileOnly "curse.maven:entity-model-features-844662:8063559"
     compileOnly "curse.maven:entity-texture-features-fabric-568563:7930620"
     compileOnly "curse.maven:epic-fight-mod-405076:8175609"
-    implementation "curse.maven:leawind-third-person-930880:8602835"
-    implementation "curse.maven:perspective-api-1575322:8595570"
+    compileOnly "curse.maven:leawind-third-person-930880:8602835"
+    compileOnly "curse.maven:perspective-api-1575322:8595570"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
