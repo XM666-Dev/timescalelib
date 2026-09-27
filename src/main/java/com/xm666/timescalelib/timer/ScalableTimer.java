@@ -31,7 +31,7 @@ public abstract class ScalableTimer {
 
     private float nextScale() {
         var tickCount = getTickCount();
-        scalers.removeIf((scaler -> scaler.isEnd(tickCount)));
+        scalers.removeIf(scaler -> scaler.isEnd(tickCount));
         return getDefaultScale() * scalers.stream()
                 .map(scaler -> scaler.getScale(tickCount))
                 .min(Float::compareTo)
