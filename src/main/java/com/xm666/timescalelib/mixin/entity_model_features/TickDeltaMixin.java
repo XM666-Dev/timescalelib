@@ -11,15 +11,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import traben.entity_model_features.models.animation.EMFAnimationEntityContext;
+import traben.entity_model_features.models.animation.math.EMFMath;
 import traben.entity_model_features.utils.EMFEntity;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(EMFAnimationEntityContext.class)
+@Mixin(EMFMath.class)
 public class TickDeltaMixin {
     @Shadow(remap = false)
-    @Deprecated
-    private static EMFEntity emfEntity() {
+    private static @Nullable EMFEntity emfEntity() {
         throw new UnsupportedOperationException("Implemented via mixin");
     }
 
