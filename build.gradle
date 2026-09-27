@@ -116,7 +116,7 @@ repositories {
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
     maven {
-        url "https://maven.bawnorton.com/releases"
+        url "https://maven.enjarai.dev/mirrors"
     }
     maven {
         url "https://cursemaven.com"
@@ -163,8 +163,8 @@ dependencies {
     }
     compileOnly fg.deobf("curse.maven:punchy-1374153:8891104")
     compileOnly fg.deobf("curse.maven:physics-mod-442735:8427046")
-    compileOnly fg.deobf("curse.maven:entity-model-features-844662:8063556")
-    compileOnly fg.deobf("curse.maven:entity-texture-features-fabric-568563:7930617")
+    compileOnly fg.deobf("curse.maven:entity-model-features-844662:8909423")
+    compileOnly fg.deobf("curse.maven:entity-texture-features-fabric-568563:8908928")
     compileOnly fg.deobf("curse.maven:epic-fight-mod-405076:8049910")
     compileOnly fg.deobf("curse.maven:leawind-third-person-930880:8602826")
     compileOnly fg.deobf("curse.maven:perspective-api-1575322:8595558")
