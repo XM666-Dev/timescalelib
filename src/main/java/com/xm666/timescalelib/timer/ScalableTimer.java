@@ -6,12 +6,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class ScalableTimer {
     private final ArrayList<Scaler> scalers = new ArrayList<>();
     private float scale;
     private boolean runTick;
     private float deltaTickResidual;
+    private Scaler[] lastScalers = new Scaler[0];
 
     public static float getDefaultScale() {
         return 1.0F;
@@ -27,6 +29,7 @@ public abstract class ScalableTimer {
         scale = nextScale;
         runTick = nextDeltaTickResidual >= 1.0F;
         deltaTickResidual = Mth.frac(nextDeltaTickResidual);
+        lastScalers = scalers.toArray(Scaler[]::new);
     }
 
     private float nextScale() {
@@ -67,7 +70,7 @@ public abstract class ScalableTimer {
     }
 
     public boolean scalesTravelling(Entity entity) {
-        return scalers.stream().anyMatch(scaler -> scaler.scalesTravelling(entity));
+        return Arrays.stream(lastScalers).anyMatch(scaler -> scaler.scalesTravelling(entity));
     }
 
     public abstract int getTickCount();
