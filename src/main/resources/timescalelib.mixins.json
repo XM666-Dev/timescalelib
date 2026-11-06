@@ -24,6 +24,8 @@
   "client": [
     "entity_model_features.TickDeltaMixin",
     "epicfight.CameraMixin$EpicFightCameraAPIMixin",
+    "geckolib.ModelMixin$GeoArmorRendererMixin",
+    "geckolib.ModelMixin$GeoModelMixin",
     "physicsmod.PlaybackMixin",
     "punchy.GameTimeMixin$ItemPropertiesMixin",
     "punchy.GameTimeMixin$MiningStateMachineMixin",

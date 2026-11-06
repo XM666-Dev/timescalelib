@@ -168,6 +168,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:epic-fight-mod-405076:8049910")
     compileOnly fg.deobf("curse.maven:leawind-third-person-930880:8602826")
     compileOnly fg.deobf("curse.maven:perspective-api-1575322:8595558")
+    compileOnly fg.deobf("curse.maven:geckolib-388172:8285794")
 }
 
 mixin {
