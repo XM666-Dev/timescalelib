@@ -31,7 +31,7 @@ public class ModelMixin {
 
     @Mixin(GeoArmorRenderer.class)
     private static class GeoArmorRendererMixin {
-        @Shadow
+        @Shadow(remap = false)
         protected Entity currentEntity;
 
         @WrapOperation(method = "renderToBuffer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getFrameTime()F"))
