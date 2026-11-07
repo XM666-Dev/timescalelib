@@ -22,6 +22,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "asyncparticles.AsyncParticleMixin$AsyncTickBehaviorMixin",
     "entity_model_features.TickDeltaMixin",
     "epicfight.CameraMixin$EpicFightCameraAPIMixin",
     "geckolib.ModelMixin$GeoArmorRendererMixin",
@@ -32,6 +33,7 @@
     "punchy.GameTimeMixin$PunchyAnimationManagerMixin",
     "punchy.GameTimeMixin$SpearStateMachineMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
+    "ragdollified.RagdollMixin$ClientRagdollManagerMixin",
     "timescalelib.PartialTickMixin$GameBobMixin$EntityMixin",
     "timescalelib.PartialTickMixin$GameBobMixin$PlayerMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
