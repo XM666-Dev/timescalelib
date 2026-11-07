@@ -21,7 +21,7 @@ public class AsyncParticleMixin {
 
         @WrapMethod(method = "postTick")
         private void wrapPostTick(Operation<Void> original) {
-            if (!TimeScaleHandler.clientTimer.runsTicking()) return;
+            if (TimeScaleHandler.clientTimer == null || !TimeScaleHandler.clientTimer.runsTicking()) return;
 
             original.call();
         }
