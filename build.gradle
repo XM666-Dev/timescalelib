@@ -155,7 +155,7 @@ dependencies {
     compileOnly "curse.maven:epic-fight-mod-405076:8175609"
     compileOnly "curse.maven:leawind-third-person-930880:8602835"
     compileOnly "curse.maven:perspective-api-1575322:8595570"
-    compileOnly "curse.maven:asyncparticles-1215753:9256646"
+    compileOnly "curse.maven:asyncparticles-1215753:9488982"
     compileOnly "curse.maven:ragdollified-1417732:9437499"
     compileOnly "curse.maven:zarith-1720181:9290842"
 }
