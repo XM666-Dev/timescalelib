@@ -30,6 +30,7 @@
     "punchy.GameTimeMixin$PunchyAnimationManagerMixin",
     "punchy.GameTimeMixin$SpearStateMachineMixin",
     "punchy.GameTimeMixin$UseItemStateMachineMixin",
+    "ragdollified.RagdollMixin$ClientRagdollManagerMixin",
     "timescalelib.PartialTickMixin$GameBobMixin$EntityMixin",
     "timescalelib.PartialTickMixin$GameBobMixin$PlayerMixin",
     "timescalelib.PartialTickMixin$GameCameraMixin$CameraMixin",
