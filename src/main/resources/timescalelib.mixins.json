@@ -23,6 +23,7 @@
   },
   "client": [
     "asyncparticles.AsyncParticleMixin$AsyncTickBehaviorMixin",
+    "asyncparticles.AsyncParticleMixin$ParticleEngineMixin",
     "entity_model_features.TickDeltaMixin",
     "epicfight.CameraMixin$EpicFightCameraAPIMixin",
     "geckolib.ModelMixin$GeoArmorRendererMixin",
