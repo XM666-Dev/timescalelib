@@ -21,6 +21,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "asyncparticles.AsyncParticleMixin$AsyncTickBehaviorMixin",
     "entity_model_features.TickDeltaMixin",
     "epicfight.CameraMixin$EpicFightCameraAPIMixin",
     "physicsmod.PlaybackMixin",
